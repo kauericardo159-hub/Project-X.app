@@ -22,7 +22,6 @@ body {
     color: #ffffff;
     min-height: 100vh;
     overflow-x: hidden;
-    /* Animação de entrada da página */
     animation: fadePage 0.5s ease-out;
 }
 
@@ -31,7 +30,7 @@ body {
     to { opacity: 1; transform: translateX(0); }
 }
 
-/* Header */
+/* --- HEADER --- */
 .navbar {
     background: rgba(10, 1, 24, 0.8);
     backdrop-filter: blur(15px);
@@ -65,117 +64,133 @@ body {
 
 .app-name span { color: var(--accent-cyan); font-weight: 300; }
 
-/* Layout do Perfil */
+/* --- PERFIL CONTAINER --- */
 .profile-container {
-    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza Nick e Sobre a mim */
+    padding-bottom: 120px;
 }
 
-/* Banner Section */
-.banner-section {
-    position: relative;
+/* Banner */
+.banner-wrapper {
     width: 100%;
-    height: 180px;
-    overflow: hidden;
+    height: 160px;
+    background: #1e1e2e; /* Cor reserva caso imagem não carregue */
+    position: relative;
+    border-bottom: 2px solid var(--primary-purple);
 }
 
 .profile-banner {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.6);
 }
 
-.btn-edit {
+.btn-edit-floating {
     position: absolute;
-    top: 15px;
+    bottom: 10px;
     right: 15px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: white;
     text-decoration: none;
-    font-size: 0.8rem;
+    border: 1px solid var(--primary-purple);
     backdrop-filter: blur(5px);
-    border: 1px solid var(--glass-border);
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
-.btn-edit:active { transform: scale(0.9); }
+.btn-edit-floating:active { transform: scale(0.9); }
 
-/* Informações do Usuário */
-.user-info-section {
-    padding: 0 20px;
-    margin-top: -50px; /* Sobe o avatar para cima do banner */
+/* Avatar e Nick */
+.profile-header {
+    margin-top: -55px; /* Sobe o avatar sobre o banner */
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    width: 100%;
+    z-index: 10;
 }
 
-.avatar-wrapper {
+.avatar-container {
     position: relative;
-    margin-bottom: 15px;
+    width: 110px;
+    height: 110px;
+    background: #2a2a3a;
+    border-radius: 50%;
+    border: 4px solid var(--bg-dark);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 .profile-avatar {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    border: 4px solid var(--bg-dark);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    background: #222;
+    object-fit: cover;
 }
 
-.status-indicator {
+/* Status Badge ao lado do avatar */
+.status-badge {
     position: absolute;
     bottom: 5px;
-    right: -60px;
+    right: -25px;
+    background: #000;
+    padding: 5px 12px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 4px 10px;
-    border-radius: 20px;
-    backdrop-filter: blur(5px);
+    gap: 6px;
+    border: 1px solid var(--primary-purple);
+    white-space: nowrap;
 }
 
-.status-indicator img {
-    width: 14px;
-    height: 14px;
-    margin-right: 6px;
+.status-badge img {
+    width: 12px;
+    height: 12px;
 }
 
-.status-indicator span {
-    font-size: 0.75rem;
+.status-badge span {
+    font-size: 0.7rem;
     font-weight: 600;
+    color: var(--accent-cyan);
 }
 
 .profile-nick {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-left: 5px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    margin-top: 15px;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-shadow: 0 0 15px var(--primary-purple);
+    color: #fff;
 }
 
 /* Seção Sobre a Mim */
 .about-section {
-    padding: 25px 20px;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 30px;
 }
 
-.about-section h3 {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.7);
+.about-section label {
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 600;
 }
 
 .about-box {
-    background: linear-gradient(145deg, rgba(110, 0, 255, 0.1), rgba(0, 0, 0, 0.3));
+    background: rgba(110, 0, 255, 0.05);
+    border: 1px solid rgba(110, 0, 255, 0.3);
     padding: 20px;
-    border-radius: 15px;
-    border: 1px solid var(--primary-purple);
-    min-height: 100px;
+    border-radius: 20px;
+    min-height: 120px;
+    backdrop-filter: blur(10px);
     box-shadow: inset 0 0 15px rgba(110, 0, 255, 0.1);
 }
 
-/* Barra de Navegação Inferior */
+/* --- BARRA INFERIOR --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -183,9 +198,10 @@ body {
     background: rgba(10, 1, 24, 0.95);
     display: flex;
     justify-content: space-around;
-    padding: 12px 0 25px 0; /* Espaço extra para o "queixo" do celular */
+    padding: 12px 0 25px 0;
     border-top: 1px solid rgba(110, 0, 255, 0.2);
     backdrop-filter: blur(20px);
+    z-index: 100;
 }
 
 .nav-item {
@@ -195,7 +211,7 @@ body {
     flex-direction: column;
     align-items: center;
     font-size: 0.7rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s;
 }
 
 .nav-icon {
@@ -206,29 +222,11 @@ body {
     transition: 0.3s;
 }
 
-/* Animação de Clique e Item Ativo */
 .nav-item:active { transform: scale(0.85); }
 
-.nav-item.active {
-    color: var(--accent-cyan);
-}
-
+.nav-item.active { color: var(--accent-cyan); }
 .nav-item.active .nav-icon {
     opacity: 1;
     filter: drop-shadow(0 0 8px var(--accent-cyan));
     transform: translateY(-5px);
-}
-
-/* Efeito de luz no fundo */
-body::before {
-    content: "";
-    position: fixed;
-    top: -10%;
-    right: -10%;
-    width: 300px;
-    height: 300px;
-    background: var(--primary-purple);
-    filter: blur(150px);
-    opacity: 0.15;
-    z-index: -1;
 }
