@@ -4,70 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus Digital | Perfil</title>
-    
     <link rel="icon" href="icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="icon.png">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="page-profile">
 
     <header class="navbar">
         <div class="container-header">
-            <img src="icon.png" alt="Logo Nexus" class="logo-img">
+            <img src="icon.png" alt="Logo" class="logo-img">
             <h1 class="app-name">Nexus <span>Digital</span></h1>
         </div>
     </header>
 
     <main class="profile-container">
-        
         <div class="banner-wrapper">
-            <img src="banner.jpg" alt="Banner do Usuário" class="profile-banner">
-            <div class="banner-overlay"></div>
-            
-            <a href="editar.html" class="btn-edit-floating">
-                <span>Editar Perfil</span>
-            </a>
+            <img src="banner.jpg" alt="Banner" class="profile-banner">
+            <a href="editar.html" class="btn-edit-action">Editar Perfil</a>
         </div>
 
         <div class="profile-header">
             <div class="avatar-container">
-                <img src="user-photo.jpg" alt="Foto de Perfil" class="profile-avatar">
-                
+                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar">
                 <div class="status-badge">
-                    <img src="status-online.png" alt="Status Ícone" class="status-icon">
+                    <img src="status-online.png" alt="Status">
                     <span>Online</span>
                 </div>
             </div>
-            
             <h2 class="profile-nick">Nick de Usuário</h2>
         </div>
 
         <section class="about-section">
-            <label class="section-label">Sobre a mim</label>
+            <label>Sobre a mim</label>
             <div class="about-box">
-                <p class="about-text">Escreva algo incrível sobre você aqui para que todos saibam quem você é no ecossistema Nexus.</p>
+                <p>Escreva algo incrível sobre você aqui...</p>
             </div>
         </section>
-
     </main>
 
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
-            <img src="home-icon.png" alt="Ícone Início" class="nav-icon">
+            <img src="home-icon.png" alt="Início" class="nav-icon">
             <span>Início</span>
         </a>
         <a href="perfil.html" class="nav-item active">
-            <img src="profile-icon.png" alt="Ícone Perfil" class="nav-icon">
+            <img src="profile-icon.png" alt="Perfil" class="nav-icon">
             <span>Perfil</span>
         </a>
     </nav>
-
-    <script>
-        document.querySelector('.btn-edit-floating').addEventListener('click', function(e) {
-            this.style.transform = 'scale(0.95)';
-        });
-    </script>
 
 </body>
 </html>
