@@ -1,5 +1,4 @@
-/* Importando uma fonte moderna do Google */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap');
 
 * {
     margin: 0;
@@ -7,21 +6,28 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    /* Fundo escuro e chamativo com gradiente */
-    background: radial-gradient(circle at top right, #001f3f, #000814);
-    color: #ffffff;
-    min-height: 100vh;
-    overflow-x: hidden;
+:root {
+    --primary-purple: #6e00ff;
+    --accent-cyan: #00d4ff;
+    --bg-dark: #0a0118;
+    --glass: rgba(255, 255, 255, 0.05);
 }
 
-/* Cabeçalho Estilizado */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0a0118 0%, #1a0033 50%, #2d0050 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
 .navbar {
-    background: rgba(255, 255, 255, 0.05); /* Efeito de transparência */
-    backdrop-filter: blur(10px); /* Desfoque atrás do menu (Glassmorphism) */
-    padding: 15px 5%;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    border-bottom: 1px solid rgba(110, 0, 255, 0.2);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -34,45 +40,91 @@ body {
     margin: 0 auto;
 }
 
-/* Estilo do Ícone */
 .logo-img {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px; /* Bordas arredondadas modernas */
-    margin-right: 15px;
-    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); /* Brilho leve no ícone */
-    transition: transform 0.3s ease;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-right: 12px;
+    box-shadow: 0 0 20px var(--primary-purple);
 }
 
-.logo-img:hover {
-    transform: scale(1.1); /* Efeito ao passar o mouse */
-}
-
-/* Nome do App */
 .app-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(to right, #fff, #00d4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; /* Texto degradê */
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -1px;
 }
 
-/* Área de Conteúdo */
+.app-name span {
+    color: var(--accent-cyan);
+    font-weight: 300;
+}
+
+/* Card Central */
 .content {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    padding-bottom: 100px; /* Espaço para não cobrir a barra inferior */
+}
+
+.welcome-card {
+    background: var(--glass);
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
+    animation: floating 3s ease-in-out infinite;
 }
 
-/* Detalhe extra: Uma animação suave na entrada */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-.container-header {
-    animation: fadeIn 0.8s ease-out;
+/* Barra Inferior */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    background: rgba(15, 5, 30, 0.8);
+    backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid rgba(110, 0, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-item {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    filter: opacity(0.5);
+    transition: 0.3s;
+}
+
+.nav-item.active {
+    color: var(--accent-cyan);
+}
+
+.nav-item.active .nav-icon {
+    filter: opacity(1) drop-shadow(0 0 5px var(--accent-cyan));
+    transform: translateY(-3px);
 }
