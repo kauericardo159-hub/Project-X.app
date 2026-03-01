@@ -3,79 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Perfil</title>
-    <link rel="icon" href="icon.png" type="image/png">
+    <title>Perfil - Project X</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-profile">
+<body class="perfil-page">
 
-    <header class="navbar">
-        <div class="container-header">
-            <img src="icon.png" alt="Logo" class="logo-img">
-            <h1 class="app-name">Nexus <span>Digital</span></h1>
+    <header class="navbar-topo">
+        <div class="logo-container">
+            <img src="icon.png" alt="Logo" class="site-icon">
+            <span class="site-name">Project X - Alpha</span>
         </div>
     </header>
 
-    <main class="profile-container">
-        <div class="banner-wrapper" id="bannerDisplay">
-            <img src="banner.jpg" alt="Banner" class="profile-banner" id="userBanner">
-            <div class="banner-overlay"></div>
-            <a href="editar.html" class="btn-edit-action">Editar Perfil</a>
+    <section class="perfil-container">
+        <div class="banner-wrapper">
+            <img src="banner.jpg" alt="Banner" class="user-banner">
+            <a href="EditarPerfil.html" class="btn-editar">Editar Perfil</a>
         </div>
 
-        <div class="profile-header">
-            <div class="avatar-container">
-                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar" id="userPhoto">
-                
-                <div class="status-badge">
-                    <img src="status-online.png" alt="Status" class="status-dot">
-                    <span>Online</span>
-                </div>
+        <div class="perfil-header">
+            <div class="foto-frame">
+                <img src="user-photo.jpg" alt="Foto de Perfil" class="user-photo">
             </div>
-            
-            <h2 class="profile-nick" id="displayNick">Nick de Usuário</h2>
+            <h1 class="user-nick">Seu Nick Aqui</h1>
         </div>
 
-        <section class="about-section">
-            <label class="label-purple">Sobre a mim</label>
-            <div class="about-box">
-                <p id="displayBio">Escreva algo incrível sobre você aqui...</p>
-            </div>
-        </section>
-    </main>
+        <div class="perfil-bio">
+            <h3>Sobre mim:</h3>
+            <hr>
+            <p class="bio-text">
+                Escreva algo sobre você aqui. Esta é a sua descrição galáctica dentro do Project X.
+            </p>
+        </div>
+    </section>
 
-    <nav class="bottom-nav">
+    <nav class="menu-inferior">
         <a href="index.html" class="nav-item">
-            <img src="home-icon.png" alt="Início" class="nav-icon">
-            <span>Início</span>
+            <img src="home-icon.png" alt="Home">
+            <span>Home</span>
         </a>
         <a href="perfil.html" class="nav-item active">
-            <img src="profile-icon.png" alt="Perfil" class="nav-icon">
-            <span>Perfil</span>
+            <img src="profile-icon.png" alt="Profile">
+            <span>Profile</span>
         </a>
     </nav>
-
-    <script>
-        window.onload = function() {
-            const savedNick = localStorage.getItem('nexus_nick');
-            const savedBio = localStorage.getItem('nexus_bio');
-            const savedPhoto = localStorage.getItem('nexus_photo');
-            const savedBanner = localStorage.getItem('nexus_banner');
-
-            if (savedNick) document.getElementById('displayNick').innerText = savedNick;
-            if (savedBio) document.getElementById('displayBio').innerText = savedBio;
-            if (savedPhoto) document.getElementById('userPhoto').src = savedPhoto;
-            if (savedBanner) {
-                // Se for um vídeo (base64 de vídeo), criamos a tag video
-                if (savedBanner.includes("video")) {
-                    const videoTag = `<video src="${savedBanner}" autoplay loop muted class="profile-banner"></video>`;
-                    document.getElementById('bannerDisplay').innerHTML = videoTag + '<div class="banner-overlay"></div><a href="editar.html" class="btn-edit-action">Editar Perfil</a>';
-                } else {
-                    document.getElementById('userBanner').src = savedBanner;
-                }
-            }
-        };
-    </script>
 
 </body>
 </html>
