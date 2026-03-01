@@ -230,3 +230,91 @@ body {
     filter: drop-shadow(0 0 8px var(--accent-cyan));
     transform: translateY(-5px);
 }
+
+/* --- ESTILOS DA PÁGINA DE EDIÇÃO --- */
+.edit-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.edit-form {
+    width: 100%;
+    max-width: 400px;
+    background: var(--glass);
+    padding: 25px;
+    border-radius: 25px;
+    border: 1px solid var(--glass-border);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label, .status-selection label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input, .input-group textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(110, 0, 255, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    font-family: inherit;
+    outline: none;
+}
+
+.input-group input:focus { border-color: var(--accent-cyan); }
+
+/* Status Grid */
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.status-option input { display: none; }
+
+.status-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid transparent;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.status-box img { width: 16px; height: 16px; }
+.status-box span { font-size: 0.8rem; }
+
+.status-option input:checked + .status-box {
+    background: rgba(110, 0, 255, 0.2);
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 10px rgba(110, 0, 255, 0.3);
+}
+
+.btn-save {
+    width: 100%;
+    background: linear-gradient(to right, var(--primary-purple), #4a00aa);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(110, 0, 255, 0.4);
+}
+
+.btn-save:active { transform: scale(0.98); }
+
+.btn-back { margin-right: 15px; display: flex; align-items: center; }
