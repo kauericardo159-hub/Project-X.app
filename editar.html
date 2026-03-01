@@ -3,86 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Digital | Configurações</title>
+    <title>Nexus | Editor de Perfil</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-edit">
+<body class="page-editor-full">
 
-    <header class="navbar">
-        <div class="container-header">
-            <a href="#" onclick="confirmarSaida(event)" class="btn-back">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h1 class="app-name">Editar <span>Perfil</span></h1>
+    <main class="editor-fullscreen">
+        
+        <div class="banner-edit-container" onclick="document.getElementById('inputBanner').click()">
+            <div id="bannerPreviewContainer" class="preview-box">
+                <img src="banner.jpg" id="imgBannerPreview" alt="Banner">
+                <div class="overlay-edit">Alterar Banner</div>
+            </div>
+            <input type="file" id="inputBanner" hidden accept="image/*,video/*">
         </div>
-    </header>
 
-    <main class="edit-container">
-        <form id="editForm" class="edit-form-advanced">
+        <div class="avatar-edit-container" onclick="document.getElementById('inputAvatar').click()">
+            <div class="avatar-circle">
+                <img src="user-photo.jpg" id="imgAvatarPreview" alt="Avatar">
+                <div class="overlay-cam">📸</div>
+            </div>
+            <input type="file" id="inputAvatar" hidden accept="image/*">
+        </div>
+
+        <div class="form-container">
+            <div class="input-modern">
+                <label>Nome de Usuário</label>
+                <input type="text" id="inputNick" placeholder="Seu novo nick...">
+            </div>
             
-            <div class="upload-section">
-                <label>Banner do Perfil</label>
-                <div class="banner-preview-edit" id="bannerPreview">
-                    <span>Clique para alterar Banner (Vídeo/GIF/Foto)</span>
-                    <input type="file" id="inputBanner" accept="image/*,video/*">
-                </div>
+            <div class="input-modern">
+                <label>Biografia</label>
+                <textarea id="inputBio" placeholder="Conte sobre você..."></textarea>
             </div>
 
-            <div class="avatar-upload-section">
-                <div class="avatar-edit-wrapper">
-                    <img src="user-photo.jpg" id="avatarPreviewImg" alt="Avatar Preview">
-                    <input type="file" id="inputAvatar" accept="image/*">
-                    <div class="cam-icon">📸</div>
-                </div>
-                <label>Foto de Perfil</label>
+            <div class="action-grid">
+                <button class="btn-cancel-custom" onclick="triggerAviso()">Cancelar</button>
+                <button class="btn-save-custom" onclick="salvarTudo()">Salvar Perfil</button>
             </div>
-
-            <div class="input-group">
-                <label for="newNick">Novo Nickname</label>
-                <input type="text" id="newNick" placeholder="Digite seu novo nick..." maxlength="25">
-            </div>
-
-            <div class="edit-actions">
-                <button type="button" class="btn-cancel" onclick="confirmarSaida(event)">Cancelar</button>
-                <button type="submit" class="btn-save-final">Salvar Alterações</button>
-            </div>
-        </form>
+        </div>
     </main>
 
+    <div id="modalCrop" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Ajustar Enquadramento</h3>
+            <p>Arraste para posicionar (Simulação de Recorte)</p>
+            <div class="crop-area">
+                <img id="imgToCrop" src="" alt="Ajuste">
+                <div class="crop-guide"></div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="fecharModal()">Cancelar</button>
+                <button class="btn-confirm" onclick="confirmarCrop()">Confirmar Escolha</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAviso" class="modal-overlay">
+        <div class="modal-content aviso">
+            <div class="aviso-icon">⚠️</div>
+            <h3>Alterações não salvas!</h3>
+            <p>Você tem certeza que deseja sair? Todo o progresso será perdido.</p>
+            <div class="modal-buttons vertical">
+                <button class="btn-stay" onclick="fecharAviso()">Continuar Editando</button>
+                <button class="btn-leave" onclick="window.location.href='perfil.html'">Sair e Descartar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const form = document.getElementById('editForm');
-        let alterado = false;
+        let currentInput = '';
+        let algoAlterado = false;
 
-        // Detecta se algo foi alterado para avisar antes de sair
-        form.addEventListener('input', () => alterado = true);
+        // Monitorar mudanças para o aviso
+        document.querySelectorAll('input, textarea').forEach(el => {
+            el.oninput = () => algoAlterado = true;
+        });
 
-        function confirmarSaida(e) {
-            e.preventDefault();
-            if (alterado) {
-                if (confirm("Você tem alterações não salvas! Deseja realmente sair?")) {
-                    window.location.href = "perfil.html";
+        // Lógica de Preview e Modal de Crop
+        document.getElementById('inputBanner').onchange = e => abrirEditor(e, 'banner');
+        document.getElementById('inputAvatar').onchange = e => abrirEditor(e, 'avatar');
+
+        function abrirEditor(event, type) {
+            currentInput = type;
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imgToCrop').src = e.target.result;
+                    document.getElementById('modalCrop').classList.add('active');
+                    if(type === 'banner') {
+                        document.querySelector('.crop-guide').classList.add('rect');
+                    } else {
+                        document.querySelector('.crop-guide').classList.remove('rect');
+                    }
                 }
-            } else {
-                window.location.href = "perfil.html";
+                reader.readAsDataURL(file);
             }
         }
 
-        // Aviso ao tentar atualizar a página (F5)
-        window.onbeforeunload = function() {
-            if (alterado) {
-                return "Você perderá as alterações se atualizar a página!";
+        function confirmarCrop() {
+            const tempSrc = document.getElementById('imgToCrop').src;
+            if(currentInput === 'banner') {
+                document.getElementById('imgBannerPreview').src = tempSrc;
+            } else {
+                document.getElementById('imgAvatarPreview').src = tempSrc;
             }
-        };
+            algoAlterado = true;
+            fecharModal();
+        }
 
-        // Feedback de salvamento
-        form.onsubmit = function(e) {
-            e.preventDefault();
-            alert("Alterações salvas com sucesso!");
-            alterado = false;
-            window.location.href = "perfil.html";
-        };
+        function fecharModal() { document.getElementById('modalCrop').classList.remove('active'); }
+        
+        function triggerAviso() { 
+            if(algoAlterado) document.getElementById('modalAviso').classList.add('active');
+            else window.location.href = 'perfil.html';
+        }
+
+        function fecharAviso() { document.getElementById('modalAviso').classList.remove('active'); }
+
+        function salvarTudo() {
+            alert("Perfil atualizado com sucesso!");
+            window.location.href = 'perfil.html';
+        }
     </script>
-
 </body>
 </html>
