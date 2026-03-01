@@ -193,3 +193,99 @@ body {
     color: #bc13fe;
     font-weight: bold;
 }
+
+/* --- ESTILOS DA PÁGINA DE EDIÇÃO --- */
+.edit-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(13, 0, 26, 0.8);
+    border-radius: 20px;
+    border: 1px solid #bc13fe;
+    box-shadow: 0 0 20px rgba(160, 32, 240, 0.2);
+}
+
+.edit-container h2 {
+    text-align: center;
+    color: #bc13fe;
+    text-shadow: 0 0 10px #bc13fe;
+    margin-bottom: 30px;
+}
+
+.edit-section {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-section label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+/* Inputs de Texto */
+.edit-section input[type="text"], 
+.edit-section textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #bc13fe;
+    padding: 12px;
+    color: white;
+    border-radius: 8px;
+    outline: none;
+}
+
+/* Previews de Imagem */
+.banner-preview img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.foto-round {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #bc13fe;
+}
+
+/* Botões de Ação */
+.edit-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-save, .btn-cancel {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-save {
+    background: #bc13fe;
+    color: white;
+    box-shadow: 0 0 10px rgba(188, 19, 254, 0.4);
+}
+
+.btn-save:hover {
+    background: #a020f0;
+    transform: scale(1.02);
+}
+
+.btn-cancel {
+    background: #444;
+    color: #ccc;
+}
+
+.btn-cancel:hover {
+    background: #555;
+}
