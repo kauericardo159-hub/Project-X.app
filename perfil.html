@@ -16,14 +16,30 @@
         </div>
     </header>
 
-    <main class="content">
-        <div class="profile-card">
-            <div class="avatar-container">
-                <img src="user-photo.jpg" alt="Foto" class="profile-pic">
+    <main class="profile-container">
+        <section class="banner-section">
+            <img src="banner.jpg" alt="Banner" class="profile-banner">
+            <a href="editar.html" class="btn-edit">Editar Perfil</a>
+        </section>
+
+        <section class="user-info-section">
+            <div class="avatar-wrapper">
+                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar">
+                <div class="status-indicator">
+                    <img src="status-online.png" alt="Online" id="status-img">
+                    <span id="status-text">Online</span>
+                </div>
             </div>
-            <h2 class="user-nick">@NexusUser</h2>
-            <p class="user-status">Membro Alpha</p>
-        </div>
+
+            <h2 class="profile-nick">Nick de Usuário</h2>
+        </section>
+
+        <section class="about-section">
+            <h3>Sobre a mim</h3>
+            <div class="about-box">
+                <p>Escreva algo incrível sobre você aqui...</p>
+            </div>
+        </section>
     </main>
 
     <nav class="bottom-nav">
@@ -37,5 +53,5 @@
         </a>
     </nav>
 
-</body>
+    </body>
 </html>
