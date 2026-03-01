@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Project X</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="edit-page">
+
+    <header class="navbar-topo">
+        <div class="logo-container">
+            <img src="icon.png" alt="Logo" class="site-icon">
+            <span class="site-name">Project X - Alpha</span>
+        </div>
+    </header>
+
+    <main class="edit-container">
+        <h2>Editar seu Perfil</h2>
+
+        <form class="edit-form">
+            <div class="edit-section">
+                <label>Banner do Perfil (1280x720)</label>
+                <div class="banner-preview">
+                    <img src="banner.jpg" id="preview-banner">
+                    <input type="file" id="input-banner" accept="image/*">
+                </div>
+            </div>
+
+            <div class="edit-section">
+                <label>Foto de Perfil (400x400)</label>
+                <div class="foto-preview-container">
+                    <img src="user-photo.jpg" id="preview-photo" class="foto-round">
+                    <input type="file" id="input-photo" accept="image/*">
+                </div>
+            </div>
+
+            <div class="edit-section">
+                <label for="nick-input">Seu Nickname</label>
+                <input type="text" id="nick-input" placeholder="Digite seu novo nick...">
+            </div>
+
+            <div class="edit-section">
+                <label for="bio-input">Sobre mim</label>
+                <textarea id="bio-input" rows="4" placeholder="Conte um pouco sobre você..."></textarea>
+            </div>
+
+            <div class="edit-actions">
+                <button type="button" class="btn-save" onclick="location.href='perfil.html'">Salvar Alterações</button>
+                <button type="button" class="btn-cancel" onclick="location.href='perfil.html'">Cancelar</button>
+            </div>
+        </form>
+    </main>
+
+</body>
+</html>
