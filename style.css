@@ -94,3 +94,93 @@ body {
 .nav-item:hover img {
     filter: invert(45%) sepia(93%) saturate(3000%) hue-rotate(260deg) drop-shadow(0 0 5px #bc13fe);
 }
+
+/* ---🟢 ESTILOS DO PERFIL --- */
+.perfil-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding-bottom: 100px;
+}
+
+.banner-wrapper {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(160, 32, 240, 0.4);
+}
+
+.user-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Faz a imagem preencher o espaço sem distorcer */
+}
+
+.btn-editar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(160, 32, 240, 0.8);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+    transition: 0.3s;
+}
+
+.btn-editar:hover {
+    background: #bc13fe;
+    box-shadow: 0 0 10px #bc13fe;
+}
+
+.perfil-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -60px; /* Sobe a foto para ficar sobre o banner */
+}
+
+.foto-frame {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #0d001a;
+    box-shadow: 0 0 15px rgba(160, 32, 240, 0.8);
+    overflow: hidden;
+    background: #2e003e;
+}
+
+.user-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-nick {
+    margin-top: 10px;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px #bc13fe;
+}
+
+.perfil-bio {
+    margin: 30px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.perfil-bio hr {
+    border: 0;
+    border-top: 1px solid #bc13fe;
+    margin: 10px 0;
+}
+
+/* Ajuste para os links da barra inferior não ficarem azuis */
+.menu-inferior a {
+    text-decoration: none;
+    color: white;
+}
