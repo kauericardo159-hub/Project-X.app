@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Digital | Perfil</title>
+    <title>Nexus | Perfil</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,7 +17,7 @@
     </header>
 
     <main class="profile-container">
-        <div class="banner-wrapper" id="bannerArea">
+        <div class="banner-wrapper" id="bannerDisplay">
             <img src="banner.jpg" alt="Banner" class="profile-banner" id="userBanner">
             <div class="banner-overlay"></div>
             <a href="editar.html" class="btn-edit-action">Editar Perfil</a>
@@ -27,7 +27,7 @@
             <div class="avatar-container">
                 <img src="user-photo.jpg" alt="Avatar" class="profile-avatar" id="userPhoto">
                 
-                <div class="status-badge" id="autoStatus">
+                <div class="status-badge">
                     <img src="status-online.png" alt="Status" class="status-dot">
                     <span>Online</span>
                 </div>
@@ -54,6 +54,28 @@
             <span>Perfil</span>
         </a>
     </nav>
+
+    <script>
+        window.onload = function() {
+            const savedNick = localStorage.getItem('nexus_nick');
+            const savedBio = localStorage.getItem('nexus_bio');
+            const savedPhoto = localStorage.getItem('nexus_photo');
+            const savedBanner = localStorage.getItem('nexus_banner');
+
+            if (savedNick) document.getElementById('displayNick').innerText = savedNick;
+            if (savedBio) document.getElementById('displayBio').innerText = savedBio;
+            if (savedPhoto) document.getElementById('userPhoto').src = savedPhoto;
+            if (savedBanner) {
+                // Se for um vídeo (base64 de vídeo), criamos a tag video
+                if (savedBanner.includes("video")) {
+                    const videoTag = `<video src="${savedBanner}" autoplay loop muted class="profile-banner"></video>`;
+                    document.getElementById('bannerDisplay').innerHTML = videoTag + '<div class="banner-overlay"></div><a href="editar.html" class="btn-edit-action">Editar Perfil</a>';
+                } else {
+                    document.getElementById('userBanner').src = savedBanner;
+                }
+            }
+        };
+    </script>
 
 </body>
 </html>
