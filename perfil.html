@@ -17,26 +17,29 @@
     </header>
 
     <main class="profile-container">
-        <div class="banner-wrapper">
-            <img src="banner.jpg" alt="Banner" class="profile-banner">
+        <div class="banner-wrapper" id="bannerArea">
+            <img src="banner.jpg" alt="Banner" class="profile-banner" id="userBanner">
+            <div class="banner-overlay"></div>
             <a href="editar.html" class="btn-edit-action">Editar Perfil</a>
         </div>
 
         <div class="profile-header">
             <div class="avatar-container">
-                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar">
-                <div class="status-badge">
-                    <img src="status-online.png" alt="Status">
+                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar" id="userPhoto">
+                
+                <div class="status-badge" id="autoStatus">
+                    <img src="status-online.png" alt="Status" class="status-dot">
                     <span>Online</span>
                 </div>
             </div>
-            <h2 class="profile-nick">Nick de Usuário</h2>
+            
+            <h2 class="profile-nick" id="displayNick">Nick de Usuário</h2>
         </div>
 
         <section class="about-section">
-            <label>Sobre a mim</label>
+            <label class="label-purple">Sobre a mim</label>
             <div class="about-box">
-                <p>Escreva algo incrível sobre você aqui...</p>
+                <p id="displayBio">Escreva algo incrível sobre você aqui...</p>
             </div>
         </section>
     </main>
