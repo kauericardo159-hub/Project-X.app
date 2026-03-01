@@ -17,30 +17,31 @@
     </header>
 
     <main class="profile-container">
-        <section class="banner-section">
-            <img src="banner.jpg" alt="Banner" class="profile-banner">
-            <a href="editar.html" class="btn-edit">Editar Perfil</a>
-        </section>
+    <div class="banner-wrapper">
+        <img src="banner.jpg" alt="Banner" class="profile-banner">
+        <div class="banner-overlay"></div>
+        <a href="editar.html" class="btn-edit-floating">Editar Perfil</a>
+    </div>
 
-        <section class="user-info-section">
-            <div class="avatar-wrapper">
-                <img src="user-photo.jpg" alt="Avatar" class="profile-avatar">
-                <div class="status-indicator">
-                    <img src="status-online.png" alt="Online" id="status-img">
-                    <span id="status-text">Online</span>
-                </div>
+    <div class="profile-header">
+        <div class="avatar-container">
+            <img src="user-photo.jpg" alt="Avatar" class="profile-avatar">
+            <div class="status-badge">
+                <img src="status-online.png" alt="Status">
+                <span>Online</span>
             </div>
+        </div>
+        
+        <h2 class="profile-nick">Nick de Usuário</h2>
+    </div>
 
-            <h2 class="profile-nick">Nick de Usuário</h2>
-        </section>
-
-        <section class="about-section">
-            <h3>Sobre a mim</h3>
-            <div class="about-box">
-                <p>Escreva algo incrível sobre você aqui...</p>
-            </div>
-        </section>
-    </main>
+    <section class="about-section">
+        <label>Sobre a mim</label>
+        <div class="about-box">
+            <p>Escreva algo incrível sobre você aqui...</p>
+        </div>
+    </section>
+</main>
 
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
