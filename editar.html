@@ -3,130 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Editor de Perfil</title>
+    <title>Nexus | Editar Perfil</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-editor-full">
+<body class="editing-mode">
 
-    <main class="editor-fullscreen">
+    <main class="edit-fullscreen">
         
-        <div class="banner-edit-container" onclick="document.getElementById('inputBanner').click()">
-            <div id="bannerPreviewContainer" class="preview-box">
-                <img src="banner.jpg" id="imgBannerPreview" alt="Banner">
-                <div class="overlay-edit">Alterar Banner</div>
-            </div>
-            <input type="file" id="inputBanner" hidden accept="image/*,video/*">
-        </div>
-
-        <div class="avatar-edit-container" onclick="document.getElementById('inputAvatar').click()">
-            <div class="avatar-circle">
-                <img src="user-photo.jpg" id="imgAvatarPreview" alt="Avatar">
-                <div class="overlay-cam">📸</div>
-            </div>
-            <input type="file" id="inputAvatar" hidden accept="image/*">
-        </div>
-
-        <div class="form-container">
-            <div class="input-modern">
-                <label>Nome de Usuário</label>
-                <input type="text" id="inputNick" placeholder="Seu novo nick...">
-            </div>
+        <form id="profileForm" class="form-container">
             
-            <div class="input-modern">
-                <label>Biografia</label>
-                <textarea id="inputBio" placeholder="Conte sobre você..."></textarea>
+            <div class="edit-field">
+                <label>Banner</label>
+                <div class="banner-preview-box" id="bannerContainer">
+                    <img src="banner.jpg" id="currentBanner" class="preview-img">
+                    <input type="file" id="fileBanner" accept="image/*,video/*,image/gif">
+                    <div class="overlay-edit">Alterar Banner</div>
+                </div>
             </div>
 
-            <div class="action-grid">
-                <button class="btn-cancel-custom" onclick="triggerAviso()">Cancelar</button>
-                <button class="btn-save-custom" onclick="salvarTudo()">Salvar Perfil</button>
+            <div class="edit-field avatar-field">
+                <div class="avatar-preview-box">
+                    <img src="user-photo.jpg" id="currentAvatar" class="preview-img">
+                    <input type="file" id="fileAvatar" accept="image/*,image/gif">
+                    <div class="overlay-edit">Alterar</div>
+                </div>
+                <label>Foto de Perfil</label>
             </div>
-        </div>
+
+            <div class="edit-field">
+                <label>Nickname</label>
+                <input type="text" id="inputNick" placeholder="Seu novo nick..." maxlength="20">
+            </div>
+
+            <div class="edit-field">
+                <label>Sobre a mim</label>
+                <textarea id="inputBio" placeholder="Conte algo sobre você..." rows="3"></textarea>
+            </div>
+
+            <div class="action-footer">
+                <button type="button" class="btn-cancel" onclick="triggerModal()">Cancelar</button>
+                <button type="submit" class="btn-save-confirm">Salvar Alterações</button>
+            </div>
+        </form>
     </main>
 
-    <div id="modalCrop" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Ajustar Enquadramento</h3>
-            <p>Arraste para posicionar (Simulação de Recorte)</p>
-            <div class="crop-area">
-                <img id="imgToCrop" src="" alt="Ajuste">
-                <div class="crop-guide"></div>
-            </div>
-            <div class="modal-buttons">
-                <button onclick="fecharModal()">Cancelar</button>
-                <button class="btn-confirm" onclick="confirmarCrop()">Confirmar Escolha</button>
+    <div id="cropModal" class="modal-crop">
+        <div class="crop-content">
+            <h3>Ajustar Mídia</h3>
+            <div class="crop-area" id="cropArea">
+                </div>
+            <div class="crop-footer">
+                <button onclick="closeCrop()">Cancelar</button>
+                <button class="confirm-crop" onclick="saveCrop()">Confirmar Quadro</button>
             </div>
         </div>
     </div>
 
-    <div id="modalAviso" class="modal-overlay">
-        <div class="modal-content aviso">
-            <div class="aviso-icon">⚠️</div>
-            <h3>Alterações não salvas!</h3>
-            <p>Você tem certeza que deseja sair? Todo o progresso será perdido.</p>
-            <div class="modal-buttons vertical">
-                <button class="btn-stay" onclick="fecharAviso()">Continuar Editando</button>
-                <button class="btn-leave" onclick="window.location.href='perfil.html'">Sair e Descartar</button>
+    <div id="alertModal" class="modal-alert">
+        <div class="alert-content">
+            <p>Você tem alterações não salvas. Deseja realmente sair?</p>
+            <div class="alert-btns">
+                <button onclick="closeAlert()">Continuar Editando</button>
+                <button class="confirm-exit" onclick="exitToProfile()">Sair e Perder</button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentInput = '';
-        let algoAlterado = false;
+        // Sistema de Preview e Simulação de Edição
+        const fileInputs = [
+            { input: 'fileBanner', target: 'currentBanner' },
+            { input: 'fileAvatar', target: 'currentAvatar' }
+        ];
 
-        // Monitorar mudanças para o aviso
-        document.querySelectorAll('input, textarea').forEach(el => {
-            el.oninput = () => algoAlterado = true;
+        fileInputs.forEach(item => {
+            document.getElementById(item.input).addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(val) {
+                        // Abre o modal de "Corte/Ajuste" antes de aplicar
+                        document.getElementById('cropArea').innerHTML = `<img src="${val.target.result}" style="max-width:100%; max-height:300px;">`;
+                        document.getElementById('cropModal').classList.add('active');
+                        
+                        // Salva referência da imagem temporariamente
+                        window.tempImg = val.target.result;
+                        window.tempTarget = item.target;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
         });
 
-        // Lógica de Preview e Modal de Crop
-        document.getElementById('inputBanner').onchange = e => abrirEditor(e, 'banner');
-        document.getElementById('inputAvatar').onchange = e => abrirEditor(e, 'avatar');
-
-        function abrirEditor(event, type) {
-            currentInput = type;
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imgToCrop').src = e.target.result;
-                    document.getElementById('modalCrop').classList.add('active');
-                    if(type === 'banner') {
-                        document.querySelector('.crop-guide').classList.add('rect');
-                    } else {
-                        document.querySelector('.crop-guide').classList.remove('rect');
-                    }
-                }
-                reader.readAsDataURL(file);
-            }
+        function saveCrop() {
+            document.getElementById(window.tempTarget).src = window.tempImg;
+            closeCrop();
         }
 
-        function confirmarCrop() {
-            const tempSrc = document.getElementById('imgToCrop').src;
-            if(currentInput === 'banner') {
-                document.getElementById('imgBannerPreview').src = tempSrc;
-            } else {
-                document.getElementById('imgAvatarPreview').src = tempSrc;
-            }
-            algoAlterado = true;
-            fecharModal();
-        }
+        function closeCrop() { document.getElementById('cropModal').classList.remove('active'); }
+        function triggerModal() { document.getElementById('alertModal').classList.add('active'); }
+        function closeAlert() { document.getElementById('alertModal').classList.remove('active'); }
+        function exitToProfile() { window.location.href = 'perfil.html'; }
 
-        function fecharModal() { document.getElementById('modalCrop').classList.remove('active'); }
-        
-        function triggerAviso() { 
-            if(algoAlterado) document.getElementById('modalAviso').classList.add('active');
-            else window.location.href = 'perfil.html';
-        }
-
-        function fecharAviso() { document.getElementById('modalAviso').classList.remove('active'); }
-
-        function salvarTudo() {
-            alert("Perfil atualizado com sucesso!");
+        // Salvamento Simulado (LocalStorage para persistência)
+        document.getElementById('profileForm').onsubmit = (e) => {
+            e.preventDefault();
+            alert("Perfil Atualizado com Sucesso!");
             window.location.href = 'perfil.html';
-        }
+        };
     </script>
+
 </body>
 </html>
