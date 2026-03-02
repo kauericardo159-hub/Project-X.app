@@ -16,41 +16,77 @@
     </header>
 
     <main class="edit-container">
-        <h2>Editar seu Perfil</h2>
+        <h2>Personalizar Perfil</h2>
 
-        <form class="edit-form">
+        <form id="form-editar" class="edit-form">
+            
             <div class="edit-section">
-                <label>Banner do Perfil (1280x720)</label>
-                <div class="banner-preview">
-                    <img src="banner.jpg" id="preview-banner">
-                    <input type="file" id="input-banner" accept="image/*">
+                <label>Banner do Perfil</label>
+                <div class="banner-preview-container">
+                    <img src="banner.jpg" id="img-banner-preview" class="preview-img-full">
+                    <label for="input-banner" class="custom-file-upload">Trocar Banner</label>
+                    <input type="file" id="input-banner" accept="image/*" style="display:none;">
                 </div>
             </div>
 
             <div class="edit-section">
-                <label>Foto de Perfil (400x400)</label>
+                <label>Foto de Perfil</label>
                 <div class="foto-preview-container">
-                    <img src="user-photo.jpg" id="preview-photo" class="foto-round">
-                    <input type="file" id="input-photo" accept="image/*">
+                    <img src="user-photo.jpg" id="img-photo-preview" class="preview-img-round">
+                    <label for="input-photo" class="custom-file-upload">Trocar Foto</label>
+                    <input type="file" id="input-photo" accept="image/*" style="display:none;">
                 </div>
             </div>
 
             <div class="edit-section">
-                <label for="nick-input">Seu Nickname</label>
-                <input type="text" id="nick-input" placeholder="Digite seu novo nick...">
+                <label for="nick-input">Nickname</label>
+                <input type="text" id="nick-input" placeholder="Seu novo nome...">
             </div>
 
             <div class="edit-section">
                 <label for="bio-input">Sobre mim</label>
-                <textarea id="bio-input" rows="4" placeholder="Conte um pouco sobre você..."></textarea>
+                <textarea id="bio-input" rows="4" placeholder="Escreva sua bio..."></textarea>
             </div>
 
             <div class="edit-actions">
-                <button type="button" class="btn-save" onclick="location.href='perfil.html'">Salvar Alterações</button>
+                <button type="button" class="btn-save" id="btn-salvar">Salvar Alterações</button>
                 <button type="button" class="btn-cancel" onclick="location.href='perfil.html'">Cancelar</button>
             </div>
         </form>
     </main>
 
+    <script>
+        // Lógica para trocar as imagens em tempo real (Preview)
+        function setupPreview(inputId, imgId) {
+            document.getElementById(inputId).addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById(imgId).src = event.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        }
+
+        setupPreview('input-banner', 'img-banner-preview');
+        setupPreview('input-photo', 'img-photo-preview');
+
+        // Lógica de Salvamento (LocalStorage)
+        document.getElementById('btn-salvar').addEventListener('click', () => {
+            const nick = document.getElementById('nick-input').value;
+            const bio = document.getElementById('bio-input').value;
+            const banner = document.getElementById('img-banner-preview').src;
+            const photo = document.getElementById('img-photo-preview').src;
+
+            if(nick) localStorage.setItem('userNick', nick);
+            if(bio) localStorage.setItem('userBio', bio);
+            localStorage.setItem('userBanner', banner);
+            localStorage.setItem('userPhoto', photo);
+
+            alert("Perfil atualizado com sucesso!");
+            window.location.href = 'perfil.html';
+        });
+    </script>
 </body>
 </html>
