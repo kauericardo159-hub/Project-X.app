@@ -14,79 +14,39 @@
         }
     </script>
 
-    <header class="navbar-topo">
-        <div class="logo-container">
-            <img src="icon.png" alt="Logo" class="site-icon">
-            <span class="site-name">Project X</span>
-        </div>
-        <div class="user-status">
-            <span id="welcome-user">Olá!</span>
-        </div>
-    </header>
-
     <main class="feed-container">
-        <div class="create-post">
-            <textarea id="post-text" placeholder="O que está acontecendo no espaço?"></textarea>
-            <button onclick="postar()">Postar</button>
-        </div>
+        <h2 class="feed-title">Explorar Galáxia</h2>
 
         <div id="feed-lista">
             <div class="post-card">
                 <div class="post-header">
-                    <img src="user-photo.jpg" class="post-avatar">
+                    <img src="icon.png" class="post-avatar">
                     <div class="post-info">
-                        <strong>Sistema</strong>
-                        <span>@project_x</span>
+                        <strong>Project X Official</strong>
+                        <span>@admin</span>
                     </div>
                 </div>
-                <p class="post-content">Bem-vindo ao Project X Alpha! Explore a galáxia.</p>
+                <p class="post-content">
+                    Bem-vindo ao seu novo centro de comando. Aqui você encontrará as últimas atualizações do sistema e novidades da comunidade.
+                </p>
+            </div>
+
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="user-photo.jpg" class="post-avatar">
+                    <div class="post-info">
+                        <strong>Explorador Alfa</strong>
+                        <span>@astro_dev</span>
+                    </div>
+                </div>
+                <p class="post-content">
+                    A estrutura de componentes está funcionando! Agora o site carrega o topo e o menu de forma sincronizada em todas as páginas.
+                </p>
             </div>
         </div>
     </main>
 
-    <nav class="menu-inferior">
-        <a href="index.html" class="nav-item active">
-            <img src="home-icon.png" alt="Home">
-            <span>Home</span>
-        </a>
-        <a href="perfil.html" class="nav-item">
-            <img src="profile-icon.png" alt="Profile">
-            <span>Profile</span>
-        </a>
-    </nav>
+    <script src="components.js"></script>
 
-    <script>
-        // Exibir nome do usuário no topo
-        const nickAtivo = localStorage.getItem('userNick') || 'Viajante';
-        document.getElementById('welcome-user').innerText = 'Olá, ' + nickAtivo;
-
-        // Função simples para postar (salva apenas nesta sessão)
-        function postar() {
-            const texto = document.getElementById('post-text').value;
-            if(!texto) return;
-
-            const feed = document.getElementById('feed-lista');
-            const novaPostagem = document.createElement('div');
-            novaPostagem.className = 'post-card';
-            
-            const foto = localStorage.getItem('userPhoto') || 'user-photo.jpg';
-            const nick = localStorage.getItem('userNick') || 'Usuário';
-            const userAt = localStorage.getItem('usuarioLogado') || '@anonimo';
-
-            novaPostagem.innerHTML = `
-                <div class="post-header">
-                    <img src="${foto}" class="post-avatar">
-                    <div class="post-info">
-                        <strong>${nick}</strong>
-                        <span>${userAt}</span>
-                    </div>
-                </div>
-                <p class="post-content">${texto}</p>
-            `;
-
-            feed.prepend(novaPostagem); // Coloca no topo
-            document.getElementById('post-text').value = '';
-        }
-    </script>
 </body>
 </html>
