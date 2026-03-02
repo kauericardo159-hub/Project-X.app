@@ -8,67 +8,92 @@
 </head>
 <body class="perfil-page">
 
-    <header class="navbar-topo">
-        <div class="logo-container">
-            <img src="icon.png" alt="Logo" class="site-icon">
-            <span class="site-name">Project X - Alpha</span>
-        </div>
-    </header>
-
     <section class="perfil-container">
         <div class="banner-wrapper">
-            <img src="banner.jpg" id="display-banner" alt="Banner" class="user-banner">
-            <a href="EditarPerfil.html" class="btn-editar">Editar Perfil</a>
+            <img src="banner.jpg" id="display-banner" class="user-banner">
         </div>
 
-        <div class="perfil-header">
+        <div class="perfil-header-main">
             <div class="foto-frame">
-                <img src="user-photo.jpg" id="display-photo" alt="Foto de Perfil" class="user-photo">
+                <img src="user-photo.jpg" id="display-photo" class="user-photo">
             </div>
-            <h1 id="display-nick" class="user-nick">Seu Nick Aqui</h1>
+            
+            <div class="status-badge" id="user-status-badge">
+                <img src="status-online.png" id="status-icon" alt="Status">
+                <span id="status-text">Online</span>
+            </div>
+        </div>
+
+        <div class="user-info-section">
+            <h1 id="display-nick">Nome</h1>
+            <span id="display-user" class="user-at">@Nome</span>
+            <span id="display-id" class="user-id">ID: 0</span>
+
+            <a href="EditarPerfil.html" class="btn-editar-perfil">Editar Perfil</a>
         </div>
 
         <div class="perfil-bio">
             <h3>Sobre mim:</h3>
             <hr>
-            <p id="display-bio" class="bio-text">
-                Escreva algo sobre você aqui. Esta é a sua descrição galáctica dentro do Project X.
-            </p>
+            <p id="display-bio">Nenhuma descrição disponível.</p>
         </div>
     </section>
 
-    <nav class="menu-inferior">
-        <a href="index.html" class="nav-item">
-            <img src="home-icon.png" alt="Home">
-            <span>Home</span>
-        </a>
-        <a href="perfil.html" class="nav-item active">
-            <img src="profile-icon.png" alt="Profile">
-            <span>Profile</span>
-        </a>
-    </nav>
-
+    <script src="components.js"></script>
     <script>
         window.onload = function() {
-            // Busca os dados salvos no navegador
+            // Puxar dados do LocalStorage
             const savedNick = localStorage.getItem('userNick');
+            const savedUser = localStorage.getItem('usuarioLogado');
             const savedBio = localStorage.getItem('userBio');
             const savedPhoto = localStorage.getItem('userPhoto');
             const savedBanner = localStorage.getItem('userBanner');
+            
+            // Simular busca de ID (No banco de dados real seria fixo)
+            // Aqui pegamos do banco simulado que criamos no Login
+            const db = JSON.parse(localStorage.getItem('db_usuarios')) || {};
+            if (savedUser && db[savedUser]) {
+                document.getElementById('display-id').innerText = 'ID: ' + db[savedUser].id;
+            }
 
-            // Se existirem dados salvos, substitui os padrões
-            if (savedNick) {
-                document.getElementById('display-nick').innerText = savedNick;
+            // Aplicar dados na tela
+            if (savedNick) document.getElementById('display-nick').innerText = savedNick;
+            if (savedUser) document.getElementById('display-user').innerText = savedUser;
+            if (savedBio) document.getElementById('display-bio').innerText = savedBio;
+            if (savedPhoto) document.getElementById('display-photo').src = savedPhoto;
+            if (savedBanner) document.getElementById('display-banner').src = savedBanner;
+
+            // --- LÓGICA DE STATUS AO VIVO ---
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            const badge = document.getElementById('user-status-badge');
+
+            // Função para mudar o status visualmente
+            function updateStatus(type) {
+                if(type === 'online') {
+                    statusIcon.src = 'status-online.png';
+                    statusText.innerText = 'Online';
+                    badge.style.color = '#00ff00'; // Verde
+                } else if(type === 'ausente') {
+                    statusIcon.src = 'status-ausente.png';
+                    statusText.innerText = 'Ausente';
+                    badge.style.color = '#ffff00'; // Amarelo
+                } else if(type === 'inativo') {
+                    statusIcon.src = 'status-inatico.png';
+                    statusText.innerText = 'Inativo';
+                    badge.style.color = '#ff0000'; // Vermelho
+                } else {
+                    statusIcon.src = 'status-offline.png';
+                    statusText.innerText = 'Off-line';
+                    badge.style.color = '#888888'; // Cinza
+                }
             }
-            if (savedBio) {
-                document.getElementById('display-bio').innerText = savedBio;
-            }
-            if (savedPhoto) {
-                document.getElementById('display-photo').src = savedPhoto;
-            }
-            if (savedBanner) {
-                document.getElementById('display-banner').src = savedBanner;
-            }
+
+            // Simulação: Muda o status dependendo se a janela está ativa ou não
+            updateStatus('online'); // Padrão ao abrir
+
+            window.onblur = () => updateStatus('ausente'); // Quando muda de aba
+            window.onfocus = () => updateStatus('online'); // Quando volta
         };
     </script>
 
