@@ -17,21 +17,21 @@
 
     <section class="perfil-container">
         <div class="banner-wrapper">
-            <img src="banner.jpg" alt="Banner" class="user-banner">
+            <img src="banner.jpg" id="display-banner" alt="Banner" class="user-banner">
             <a href="EditarPerfil.html" class="btn-editar">Editar Perfil</a>
         </div>
 
         <div class="perfil-header">
             <div class="foto-frame">
-                <img src="user-photo.jpg" alt="Foto de Perfil" class="user-photo">
+                <img src="user-photo.jpg" id="display-photo" alt="Foto de Perfil" class="user-photo">
             </div>
-            <h1 class="user-nick">Seu Nick Aqui</h1>
+            <h1 id="display-nick" class="user-nick">Seu Nick Aqui</h1>
         </div>
 
         <div class="perfil-bio">
             <h3>Sobre mim:</h3>
             <hr>
-            <p class="bio-text">
+            <p id="display-bio" class="bio-text">
                 Escreva algo sobre você aqui. Esta é a sua descrição galáctica dentro do Project X.
             </p>
         </div>
@@ -47,6 +47,30 @@
             <span>Profile</span>
         </a>
     </nav>
+
+    <script>
+        window.onload = function() {
+            // Busca os dados salvos no navegador
+            const savedNick = localStorage.getItem('userNick');
+            const savedBio = localStorage.getItem('userBio');
+            const savedPhoto = localStorage.getItem('userPhoto');
+            const savedBanner = localStorage.getItem('userBanner');
+
+            // Se existirem dados salvos, substitui os padrões
+            if (savedNick) {
+                document.getElementById('display-nick').innerText = savedNick;
+            }
+            if (savedBio) {
+                document.getElementById('display-bio').innerText = savedBio;
+            }
+            if (savedPhoto) {
+                document.getElementById('display-photo').src = savedPhoto;
+            }
+            if (savedBanner) {
+                document.getElementById('display-banner').src = savedBanner;
+            }
+        };
+    </script>
 
 </body>
 </html>
