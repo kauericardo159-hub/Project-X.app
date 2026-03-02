@@ -3,123 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil - Estilo YouTube</title>
+    <title>Editar Perfil - Project X</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="edit-page">
 
-    <header class="navbar-topo">
-        <div class="logo-container">
-            <img src="icon.png" alt="Logo" class="site-icon">
-            <span class="site-name">Project X - Alpha</span>
-        </div>
-        <button type="button" class="btn-topo-save" id="final-save">SALVAR</button>
-    </header>
+    <div class="edit-container">
+        <h2>Editar Perfil</h2>
 
-    <main class="edit-container">
-        <div class="edit-item-box">
+        <div class="input-group">
+            <label>ID da Conta (Imutável)</label>
+            <input type="text" id="edit-id" disabled style="opacity: 0.5; cursor: not-allowed;">
+        </div>
+
+        <div class="input-group">
             <label>Foto de Perfil</label>
-            <div class="preview-circle-container">
-                <img src="user-photo.jpg" id="main-photo-view">
-            </div>
-            <label for="input-photo" class="btn-change">ALTERAR FOTO</label>
-            <input type="file" id="input-photo" accept="image/*" hidden>
+            <input type="file" id="input-photo" accept="image/*" onchange="previewImage(this, 'preview-photo')">
+            <img src="user-photo.jpg" id="preview-photo" class="edit-preview-circle">
         </div>
 
-        <div class="edit-item-box">
-            <label>Banner do Canal</label>
-            <div class="preview-banner-container">
-                <img src="banner.jpg" id="main-banner-view">
-            </div>
-            <label for="input-banner" class="btn-change">ALTERAR BANNER</label>
-            <input type="file" id="input-banner" accept="image/*" hidden>
+        <div class="input-group">
+            <label>Banner</label>
+            <input type="file" id="input-banner" accept="image/*" onchange="previewImage(this, 'preview-banner')">
+            <img src="banner.jpg" id="preview-banner" class="edit-preview-rect">
         </div>
 
-        <div class="edit-fields">
-            <input type="text" id="nick-input" placeholder="Nome do Canal">
-            <textarea id="bio-input" placeholder="Descrição"></textarea>
+        <div class="input-group">
+            <label>Nome de Exibição</label>
+            <input type="text" id="edit-nick" placeholder="Seu nome">
         </div>
-    </main>
 
-    <div id="modal-photo" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span onclick="closeModal('modal-photo')">← Cortar e girar</span>
-                <button class="btn-confirm" id="confirm-photo">Salvar como foto do perfil</button>
-            </div>
-            <div class="crop-area-circle">
-                <img id="crop-img-photo">
-                <div class="circle-overlay"></div>
-            </div>
+        <div class="input-group">
+            <label>Nome de Usuário (@)</label>
+            <input type="text" id="edit-user" placeholder="@usuario">
+            <small id="user-change-info" style="color: #888; font-size: 0.75rem;"></small>
+        </div>
+
+        <div class="input-group">
+            <label>Sobre mim</label>
+            <textarea id="edit-bio" rows="4"></textarea>
+        </div>
+
+        <div class="edit-actions">
+            <button class="btn-cancelar" onclick="window.location.href='perfil.html'">Cancelar</button>
+            <button class="btn-confirmar" onclick="salvarPerfil()">Salvar Alterações</button>
         </div>
     </div>
 
-    <div id="modal-banner" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span onclick="closeModal('modal-banner')">← Ajustar Banner</span>
-                <button class="btn-confirm" id="confirm-banner">PRONTO</button>
-            </div>
-            <div class="crop-area-banner">
-                <img id="crop-img-banner">
-                <div class="banner-overlay-yt">
-                    <div class="yt-tv">TV</div>
-                    <div class="yt-desktop">Computador</div>
-                    <div class="yt-all">Todos os dispositivos</div>
-                </div>
-            </div>
-            <p class="yt-tip">O banner do canal será diferente em diferentes dispositivos.</p>
-        </div>
-    </div>
-
+    <script src="components.js"></script>
     <script>
-        // Sistema de abertura de Modais e Leitura de Arquivo
-        function handleImage(inputId, modalId, imgCropId) {
-            document.getElementById(inputId).addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        document.getElementById(imgCropId).src = event.target.result;
-                        document.getElementById(modalId).style.display = 'flex';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+        // Carregar dados atuais
+        window.onload = function() {
+            const userAtivo = localStorage.getItem('usuarioLogado');
+            const db = JSON.parse(localStorage.getItem('db_usuarios')) || {};
+            const dados = db[userAtivo] || {};
+
+            document.getElementById('edit-id').value = dados.id || 'N/A';
+            document.getElementById('edit-nick').value = localStorage.getItem('userNick') || '';
+            document.getElementById('edit-user').value = userAtivo || '';
+            document.getElementById('edit-bio').value = localStorage.getItem('userBio') || '';
+            document.getElementById('preview-photo').src = localStorage.getItem('userPhoto') || 'user-photo.jpg';
+            document.getElementById('preview-banner').src = localStorage.getItem('userBanner') || 'banner.jpg';
+
+            // Verificar data da última alteração do @
+            const ultimaTroca = localStorage.getItem('lastUserChange');
+            if (ultimaTroca) {
+                const dataLibera = new Date(parseInt(ultimaTroca) + (7 * 24 * 60 * 60 * 1000));
+                document.getElementById('user-change-info').innerText = `Disponível para troca em: ${dataLibera.toLocaleString()}`;
+            }
+        };
+
+        // Preview de Imagem (Corrige visualização antes de salvar)
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        handleImage('input-photo', 'modal-photo', 'crop-img-photo');
-        handleImage('input-banner', 'modal-banner', 'crop-img-banner');
+        function salvarPerfil() {
+            const novoNick = document.getElementById('edit-nick').value;
+            const novoUser = document.getElementById('edit-user').value.trim();
+            const novaBio = document.getElementById('edit-bio').value;
+            const fotoData = document.getElementById('preview-photo').src;
+            const bannerData = document.getElementById('preview-banner').src;
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+            const userAntigo = localStorage.getItem('usuarioLogado');
+            const db = JSON.parse(localStorage.getItem('db_usuarios')) || {};
 
-        // Confirmar "Recorte" (Simulado)
-        document.getElementById('confirm-photo').addEventListener('click', () => {
-            document.getElementById('main-photo-view').src = document.getElementById('crop-img-photo').src;
-            closeModal('modal-photo');
-        });
+            // LÓGICA DA REGRA DE 7 DIAS PARA O @
+            if (novoUser !== userAntigo) {
+                const agora = Date.now();
+                const ultimaTroca = localStorage.getItem('lastUserChange');
+                const seteDiasEmMs = 7 * 24 * 60 * 60 * 1000;
 
-        document.getElementById('confirm-banner').addEventListener('click', () => {
-            document.getElementById('main-banner-view').src = document.getElementById('crop-img-banner').src;
-            closeModal('modal-banner');
-        });
+                if (ultimaTroca && (agora - ultimaTroca < seteDiasEmMs)) {
+                    const resta = Math.ceil((seteDiasEmMs - (agora - ultimaTroca)) / (1000 * 60 * 60 * 24));
+                    alert(`Você só pode alterar o @ novamente em ${resta} dias.`);
+                    return;
+                }
 
-        // SALVAMENTO FINAL (LocalStorage)
-        document.getElementById('final-save').addEventListener('click', () => {
-            localStorage.setItem('userNick', document.getElementById('nick-input').value);
-            localStorage.setItem('userBio', document.getElementById('bio-input').value);
-            localStorage.setItem('userPhoto', document.getElementById('main-photo-view').src);
-            localStorage.setItem('userBanner', document.getElementById('main-banner-view').src);
+                // Verificar se o novo @ já existe
+                if (db[novoUser]) {
+                    alert('Este @ já está em uso por outro usuário.');
+                    return;
+                }
+
+                // Se trocou o @, atualiza o "banco de dados"
+                db[novoUser] = db[userAntigo]; // Copia dados (incluindo ID fixo)
+                delete db[userAntigo]; // Deleta entrada antiga
+                localStorage.setItem('usuarioLogado', novoUser);
+                localStorage.setItem('lastUserChange', agora.toString());
+            }
+
+            // Salvar demais informações
+            localStorage.setItem('userNick', novoNick);
+            localStorage.setItem('userBio', novaBio);
+            localStorage.setItem('userPhoto', fotoData);
+            localStorage.setItem('userBanner', bannerData);
+            localStorage.setItem('db_usuarios', JSON.stringify(db));
+
+            alert('Perfil atualizado com sucesso!');
             window.location.href = 'perfil.html';
-        });
-
-        // Carregar dados existentes
-        window.onload = () => {
-            if(localStorage.getItem('userNick')) document.getElementById('nick-input').value = localStorage.getItem('userNick');
-            if(localStorage.getItem('userBio')) document.getElementById('bio-input').value = localStorage.getItem('userBio');
-            if(localStorage.getItem('userPhoto')) document.getElementById('main-photo-view').src = localStorage.getItem('userPhoto');
-            if(localStorage.getItem('userBanner')) document.getElementById('main-banner-view').src = localStorage.getItem('userBanner');
-        };
+        }
     </script>
 </body>
 </html>
