@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - Project X</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <img src="icon.png" alt="Logo" class="site-icon">
+            <h2>Project X</h2>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('register')">Criar Conta</button>
+        </div>
+
+        <form id="form-login" class="auth-form active-form">
+            <label>Seu @ ou E-mail</label>
+            <input type="text" id="login-user" placeholder="Ex: @seu_nick">
+            
+            <label>Senha</label>
+            <input type="password" id="login-pass" placeholder="••••••••">
+
+            <div class="auth-actions">
+                <button type="button" class="btn-cancelar" onclick="limparCampos()">Cancelar</button>
+                <button type="button" class="btn-confirmar" onclick="fazerLogin()">Confirmar</button>
+            </div>
+
+            <div class="divider">ou</div>
+
+            <button type="button" class="btn-google" onclick="alert('No futuro, isso abrirá a janela real do Google!')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google">
+                Entrar com Google
+            </button>
+        </form>
+
+        <form id="form-register" class="auth-form">
+            <label>Nome de Exibição</label>
+            <input type="text" id="reg-name" placeholder="Seu nome real ou apelido">
+
+            <label>Nome de Usuário (@)</label>
+            <input type="text" id="reg-user" placeholder="@seu_nick">
+
+            <label>Senha</label>
+            <input type="password" id="reg-pass" placeholder="Crie uma senha forte">
+
+            <label>Confirmar Senha</label>
+            <input type="password" id="reg-pass-confirm" placeholder="Repita a senha">
+
+            <div class="auth-actions">
+                <button type="button" class="btn-cancelar" onclick="switchTab('login')">Cancelar</button>
+                <button type="button" class="btn-confirmar" onclick="criarConta()">Criar Conta</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Alternar entre Login e Registro
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active-form'));
+            
+            if(tab === 'login') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('form-login').classList.add('active-form');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('form-register').classList.add('active-form');
+            }
+        }
+
+        function limparCampos() {
+            document.getElementById('login-user').value = '';
+            document.getElementById('login-pass').value = '';
+        }
+
+        // SIMULAÇÃO DE BANCO DE DADOS (LocalStorage)
+        // Puxa os usuários salvos ou cria um objeto vazio
+        let bancoDeDados = JSON.parse(localStorage.getItem('db_usuarios')) || {};
+
+        function criarConta() {
+            const nome = document.getElementById('reg-name').value;
+            let user = document.getElementById('reg-user').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const passConf = document.getElementById('reg-pass-confirm').value;
+
+            // Validações básicas
+            if(!nome || !user || !pass) return alert('Preencha todos os campos!');
+            if(!user.startsWith('@')) user = '@' + user; // Garante que tem o @
+            if(pass !== passConf) return alert('As senhas não coincidem!');
+
+            // Verifica se o @ já existe no nosso "banco de dados" falso
+            if(bancoDeDados[user]) {
+                return alert('Esse @ já está em uso! Escolha outro.');
+            }
+
+            // Gera ID Único (ex: ID-1684392948)
+            const idUnico = 'ID-' + Date.now();
+
+            // Salva o usuário
+            bancoDeDados[user] = {
+                id: idUnico,
+                nome: nome,
+                senha: pass // ALERTA: Num sistema real, senhas NUNCA são salvas assim!
+            };
+
+            localStorage.setItem('db_usuarios', JSON.stringify(bancoDeDados));
+            alert('Conta criada com sucesso! Seu ID é: ' + idUnico + '\nAgora faça o login.');
+            
+            // Limpa form e vai pro login
+            document.getElementById('form-register').reset();
+            switchTab('login');
+        }
+
+        function fazerLogin() {
+            let user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value;
+
+            if(!user.startsWith('@')) user = '@' + user;
+
+            const contaEncontrada = bancoDeDados[user];
+
+            if(contaEncontrada && contaEncontrada.senha === pass) {
+                // Login deu certo! Salva o usuário atual como logado
+                localStorage.setItem('usuarioLogado', user);
+                localStorage.setItem('userNick', contaEncontrada.nome); // Atualiza o nick do perfil
+                window.location.href = 'index.html'; // Redireciona para a Home
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        }
+    </script>
+</body>
+</html>
+
