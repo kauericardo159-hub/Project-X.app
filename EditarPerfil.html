@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil - Project X</title>
+    <title>Editar Perfil - Estilo YouTube</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="edit-page">
@@ -13,90 +13,113 @@
             <img src="icon.png" alt="Logo" class="site-icon">
             <span class="site-name">Project X - Alpha</span>
         </div>
+        <button type="button" class="btn-topo-save" id="final-save">SALVAR</button>
     </header>
 
     <main class="edit-container">
-        <h2>Personalizar Perfil</h2>
-
-        <form id="edit-form" class="edit-form">
-            
-            <div class="edit-section">
-                <label>Banner do Perfil</label>
-                <div class="banner-preview-container">
-                    <img src="banner.jpg" id="preview-banner" class="img-fit">
-                    <label for="input-banner" class="custom-file-upload">Alterar Banner</label>
-                    <input type="file" id="input-banner" accept="image/*" style="display:none;">
-                </div>
+        <div class="edit-item-box">
+            <label>Foto de Perfil</label>
+            <div class="preview-circle-container">
+                <img src="user-photo.jpg" id="main-photo-view">
             </div>
+            <label for="input-photo" class="btn-change">ALTERAR FOTO</label>
+            <input type="file" id="input-photo" accept="image/*" hidden>
+        </div>
 
-            <div class="edit-section">
-                <label>Foto de Perfil</label>
-                <div class="foto-preview-container">
-                    <img src="user-photo.jpg" id="preview-photo" class="foto-round">
-                    <label for="input-photo" class="custom-file-upload">Trocar Foto</label>
-                    <input type="file" id="input-photo" accept="image/*" style="display:none;">
-                </div>
+        <div class="edit-item-box">
+            <label>Banner do Canal</label>
+            <div class="preview-banner-container">
+                <img src="banner.jpg" id="main-banner-view">
             </div>
+            <label for="input-banner" class="btn-change">ALTERAR BANNER</label>
+            <input type="file" id="input-banner" accept="image/*" hidden>
+        </div>
 
-            <div class="edit-section">
-                <label for="nick-input">Nickname</label>
-                <input type="text" id="nick-input" placeholder="Seu novo nome...">
-            </div>
-
-            <div class="edit-section">
-                <label for="bio-input">Sobre mim</label>
-                <textarea id="bio-input" rows="4" placeholder="Sua descrição..."></textarea>
-            </div>
-
-            <div class="edit-actions">
-                <button type="button" id="btn-save" class="btn-save">Salvar Alterações</button>
-                <button type="button" class="btn-cancel" onclick="window.location.href='perfil.html'">Cancelar</button>
-            </div>
-        </form>
+        <div class="edit-fields">
+            <input type="text" id="nick-input" placeholder="Nome do Canal">
+            <textarea id="bio-input" placeholder="Descrição"></textarea>
+        </div>
     </main>
 
+    <div id="modal-photo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span onclick="closeModal('modal-photo')">← Cortar e girar</span>
+                <button class="btn-confirm" id="confirm-photo">Salvar como foto do perfil</button>
+            </div>
+            <div class="crop-area-circle">
+                <img id="crop-img-photo">
+                <div class="circle-overlay"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-banner" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span onclick="closeModal('modal-banner')">← Ajustar Banner</span>
+                <button class="btn-confirm" id="confirm-banner">PRONTO</button>
+            </div>
+            <div class="crop-area-banner">
+                <img id="crop-img-banner">
+                <div class="banner-overlay-yt">
+                    <div class="yt-tv">TV</div>
+                    <div class="yt-desktop">Computador</div>
+                    <div class="yt-all">Todos os dispositivos</div>
+                </div>
+            </div>
+            <p class="yt-tip">O banner do canal será diferente em diferentes dispositivos.</p>
+        </div>
+    </div>
+
     <script>
-        // Função para trocar o preview das imagens
-        function setupPreview(inputId, imgId) {
+        // Sistema de abertura de Modais e Leitura de Arquivo
+        function handleImage(inputId, modalId, imgCropId) {
             document.getElementById(inputId).addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        document.getElementById(imgId).src = event.target.result;
-                    }
+                        document.getElementById(imgCropId).src = event.target.result;
+                        document.getElementById(modalId).style.display = 'flex';
+                    };
                     reader.readAsDataURL(file);
                 }
             });
         }
 
-        setupPreview('input-banner', 'preview-banner');
-        setupPreview('input-photo', 'preview-photo');
+        handleImage('input-photo', 'modal-photo', 'crop-img-photo');
+        handleImage('input-banner', 'modal-banner', 'crop-img-banner');
 
-        // Lógica de Salvamento Local (Persistência)
-        document.getElementById('btn-save').addEventListener('click', function() {
-            const nick = document.getElementById('nick-input').value;
-            const bio = document.getElementById('bio-input').value;
-            const banner = document.getElementById('preview-banner').src;
-            const photo = document.getElementById('preview-photo').src;
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-            // Salva no navegador do usuário
-            localStorage.setItem('userNick', nick);
-            localStorage.setItem('userBio', bio);
-            localStorage.setItem('userBanner', banner);
-            localStorage.setItem('userPhoto', photo);
+        // Confirmar "Recorte" (Simulado)
+        document.getElementById('confirm-photo').addEventListener('click', () => {
+            document.getElementById('main-photo-view').src = document.getElementById('crop-img-photo').src;
+            closeModal('modal-photo');
+        });
 
-            alert('Perfil atualizado com sucesso!');
+        document.getElementById('confirm-banner').addEventListener('click', () => {
+            document.getElementById('main-banner-view').src = document.getElementById('crop-img-banner').src;
+            closeModal('modal-banner');
+        });
+
+        // SALVAMENTO FINAL (LocalStorage)
+        document.getElementById('final-save').addEventListener('click', () => {
+            localStorage.setItem('userNick', document.getElementById('nick-input').value);
+            localStorage.setItem('userBio', document.getElementById('bio-input').value);
+            localStorage.setItem('userPhoto', document.getElementById('main-photo-view').src);
+            localStorage.setItem('userBanner', document.getElementById('main-banner-view').src);
             window.location.href = 'perfil.html';
         });
 
-        // Carregar dados salvos anteriormente ao abrir a página de edição
-        window.onload = function() {
+        // Carregar dados existentes
+        window.onload = () => {
             if(localStorage.getItem('userNick')) document.getElementById('nick-input').value = localStorage.getItem('userNick');
             if(localStorage.getItem('userBio')) document.getElementById('bio-input').value = localStorage.getItem('userBio');
-            if(localStorage.getItem('userBanner')) document.getElementById('preview-banner').src = localStorage.getItem('userBanner');
-            if(localStorage.getItem('userPhoto')) document.getElementById('preview-photo').src = localStorage.getItem('userPhoto');
-        }
+            if(localStorage.getItem('userPhoto')) document.getElementById('main-photo-view').src = localStorage.getItem('userPhoto');
+            if(localStorage.getItem('userBanner')) document.getElementById('main-banner-view').src = localStorage.getItem('userBanner');
+        };
     </script>
 </body>
 </html>
