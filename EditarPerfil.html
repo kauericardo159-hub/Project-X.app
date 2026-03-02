@@ -12,20 +12,23 @@
         <h2>Editar Perfil</h2>
 
         <div class="input-group">
-            <label>ID da Conta (Imutável)</label>
-            <input type="text" id="edit-id" disabled style="opacity: 0.5; cursor: not-allowed;">
+            <label>ID de Usuário (Não alterável)</label>
+            <input type="text" id="edit-id" readonly style="opacity: 0.6; cursor: not-allowed;">
         </div>
 
         <div class="input-group">
-            <label>Foto de Perfil</label>
-            <input type="file" id="input-photo" accept="image/*" onchange="previewImage(this, 'preview-photo')">
-            <img src="user-photo.jpg" id="preview-photo" class="edit-preview-circle">
-        </div>
-
-        <div class="input-group">
-            <label>Banner</label>
+            <label>Alterar Banner</label>
             <input type="file" id="input-banner" accept="image/*" onchange="previewImage(this, 'preview-banner')">
-            <img src="banner.jpg" id="preview-banner" class="edit-preview-rect">
+            <img id="preview-banner" class="preview-img-banner">
+        </div>
+
+        <div class="input-group">
+            <label>Alterar Foto de Perfil</label>
+            <p class="help-text">Dica: Use fotos quadradas para melhor ajuste automático.</p>
+            <input type="file" id="input-photo" accept="image/*" onchange="previewImage(this, 'preview-photo')">
+            <div class="photo-edit-frame">
+                <img id="preview-photo" class="preview-img-photo">
+            </div>
         </div>
 
         <div class="input-group">
@@ -35,18 +38,18 @@
 
         <div class="input-group">
             <label>Nome de Usuário (@)</label>
-            <input type="text" id="edit-user" placeholder="@usuario">
-            <small id="user-change-info" style="color: #888; font-size: 0.75rem;"></small>
+            <input type="text" id="edit-user" placeholder="@seu_nick">
+            <small id="user-change-info" class="info-text"></small>
         </div>
 
         <div class="input-group">
             <label>Sobre mim</label>
-            <textarea id="edit-bio" rows="4"></textarea>
+            <textarea id="edit-bio" rows="4" placeholder="Conte algo sobre você..."></textarea>
         </div>
 
         <div class="edit-actions">
             <button class="btn-cancelar" onclick="window.location.href='perfil.html'">Cancelar</button>
-            <button class="btn-confirmar" onclick="salvarPerfil()">Salvar Alterações</button>
+            <button class="btn-confirmar" onclick="salvarAlteracoes()">Salvar Alterações</button>
         </div>
     </div>
 
@@ -54,26 +57,22 @@
     <script>
         // Carregar dados atuais
         window.onload = function() {
-            const userAtivo = localStorage.getItem('usuarioLogado');
+            const savedUser = localStorage.getItem('usuarioLogado');
             const db = JSON.parse(localStorage.getItem('db_usuarios')) || {};
-            const dados = db[userAtivo] || {};
+            const dados = db[savedUser] || {};
 
-            document.getElementById('edit-id').value = dados.id || 'N/A';
-            document.getElementById('edit-nick').value = localStorage.getItem('userNick') || '';
-            document.getElementById('edit-user').value = userAtivo || '';
-            document.getElementById('edit-bio').value = localStorage.getItem('userBio') || '';
-            document.getElementById('preview-photo').src = localStorage.getItem('userPhoto') || 'user-photo.jpg';
-            document.getElementById('preview-banner').src = localStorage.getItem('userBanner') || 'banner.jpg';
+            // Preencher campos
+            document.getElementById('edit-id').value = dados.id || "0";
+            document.getElementById('edit-nick').value = localStorage.getItem('userNick') || "";
+            document.getElementById('edit-user').value = savedUser || "";
+            document.getElementById('edit-bio').value = localStorage.getItem('userBio') || "";
+            document.getElementById('preview-photo').src = localStorage.getItem('userPhoto') || "user-photo.jpg";
+            document.getElementById('preview-banner').src = localStorage.getItem('userBanner') || "banner.jpg";
 
-            // Verificar data da última alteração do @
-            const ultimaTroca = localStorage.getItem('lastUserChange');
-            if (ultimaTroca) {
-                const dataLibera = new Date(parseInt(ultimaTroca) + (7 * 24 * 60 * 60 * 1000));
-                document.getElementById('user-change-info').innerText = `Disponível para troca em: ${dataLibera.toLocaleString()}`;
-            }
+            // Verificar regra dos 7 dias
+            verificarDataTroca();
         };
 
-        // Preview de Imagem (Corrige visualização antes de salvar)
         function previewImage(input, previewId) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -84,49 +83,52 @@
             }
         }
 
-        function salvarPerfil() {
-            const novoNick = document.getElementById('edit-nick').value;
-            const novoUser = document.getElementById('edit-user').value.trim();
-            const novaBio = document.getElementById('edit-bio').value;
-            const fotoData = document.getElementById('preview-photo').src;
-            const bannerData = document.getElementById('preview-banner').src;
+        function verificarDataTroca() {
+            const ultimaTroca = localStorage.getItem('dataUltimaTrocaUser');
+            const infoText = document.getElementById('user-change-info');
+            
+            if (ultimaTroca) {
+                const dataTroca = new Date(parseInt(ultimaTroca));
+                const hoje = new Date();
+                const diffDias = Math.ceil((hoje - dataTroca) / (1000 * 60 * 60 * 24));
 
-            const userAntigo = localStorage.getItem('usuarioLogado');
+                if (diffDias < 7) {
+                    document.getElementById('edit-user').disabled = true;
+                    infoText.innerText = `Você poderá alterar o @ novamente em ${7 - diffDias} dias.`;
+                    infoText.style.color = "#ff4444";
+                } else {
+                    infoText.innerText = "O nome de usuário está disponível para alteração.";
+                    infoText.style.color = "#44ff44";
+                }
+            }
+        }
+
+        function salvarAlteracoes() {
+            const novoUser = document.getElementById('edit-user').value.trim();
+            const antigoUser = localStorage.getItem('usuarioLogado');
             const db = JSON.parse(localStorage.getItem('db_usuarios')) || {};
 
-            // LÓGICA DA REGRA DE 7 DIAS PARA O @
-            if (novoUser !== userAntigo) {
-                const agora = Date.now();
-                const ultimaTroca = localStorage.getItem('lastUserChange');
-                const seteDiasEmMs = 7 * 24 * 60 * 60 * 1000;
-
-                if (ultimaTroca && (agora - ultimaTroca < seteDiasEmMs)) {
-                    const resta = Math.ceil((seteDiasEmMs - (agora - ultimaTroca)) / (1000 * 60 * 60 * 24));
-                    alert(`Você só pode alterar o @ novamente em ${resta} dias.`);
-                    return;
-                }
-
-                // Verificar se o novo @ já existe
+            // Logica para troca de @ e os 7 dias
+            if (novoUser !== antigoUser) {
                 if (db[novoUser]) {
-                    alert('Este @ já está em uso por outro usuário.');
-                    return;
+                    return alert("Este @ já está em uso!");
                 }
-
-                // Se trocou o @, atualiza o "banco de dados"
-                db[novoUser] = db[userAntigo]; // Copia dados (incluindo ID fixo)
-                delete db[userAntigo]; // Deleta entrada antiga
+                
+                // Atualiza o "banco de dados"
+                db[novoUser] = db[antigoUser];
+                delete db[antigoUser];
+                localStorage.setItem('db_usuarios', JSON.stringify(db));
                 localStorage.setItem('usuarioLogado', novoUser);
-                localStorage.setItem('lastUserChange', agora.toString());
+                localStorage.setItem('dataUltimaTrocaUser', Date.now().toString());
             }
 
             // Salvar demais informações
-            localStorage.setItem('userNick', novoNick);
-            localStorage.setItem('userBio', novaBio);
-            localStorage.setItem('userPhoto', fotoData);
-            localStorage.setItem('userBanner', bannerData);
-            localStorage.setItem('db_usuarios', JSON.stringify(db));
+            localStorage.setItem('userNick', document.getElementById('edit-nick').value);
+            localStorage.setItem('userBio', document.getElementById('edit-bio').value);
+            localStorage.setItem('userPhoto', document.getElementById('preview-photo').src);
+            localStorage.setItem('userBanner', document.getElementById('preview-banner').src);
 
-            alert('Perfil atualizado com sucesso!');
+            alert("Perfil atualizado com sucesso!");
             window.location.href = 'perfil.html';
         }
     </script>
