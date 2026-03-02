@@ -18,13 +18,13 @@
     <main class="edit-container">
         <h2>Personalizar Perfil</h2>
 
-        <form id="form-editar" class="edit-form">
+        <form id="edit-form" class="edit-form">
             
             <div class="edit-section">
                 <label>Banner do Perfil</label>
                 <div class="banner-preview-container">
-                    <img src="banner.jpg" id="img-banner-preview" class="preview-img-full">
-                    <label for="input-banner" class="custom-file-upload">Trocar Banner</label>
+                    <img src="banner.jpg" id="preview-banner" class="img-fit">
+                    <label for="input-banner" class="custom-file-upload">Alterar Banner</label>
                     <input type="file" id="input-banner" accept="image/*" style="display:none;">
                 </div>
             </div>
@@ -32,7 +32,7 @@
             <div class="edit-section">
                 <label>Foto de Perfil</label>
                 <div class="foto-preview-container">
-                    <img src="user-photo.jpg" id="img-photo-preview" class="preview-img-round">
+                    <img src="user-photo.jpg" id="preview-photo" class="foto-round">
                     <label for="input-photo" class="custom-file-upload">Trocar Foto</label>
                     <input type="file" id="input-photo" accept="image/*" style="display:none;">
                 </div>
@@ -45,48 +45,58 @@
 
             <div class="edit-section">
                 <label for="bio-input">Sobre mim</label>
-                <textarea id="bio-input" rows="4" placeholder="Escreva sua bio..."></textarea>
+                <textarea id="bio-input" rows="4" placeholder="Sua descrição..."></textarea>
             </div>
 
             <div class="edit-actions">
-                <button type="button" class="btn-save" id="btn-salvar">Salvar Alterações</button>
-                <button type="button" class="btn-cancel" onclick="location.href='perfil.html'">Cancelar</button>
+                <button type="button" id="btn-save" class="btn-save">Salvar Alterações</button>
+                <button type="button" class="btn-cancel" onclick="window.location.href='perfil.html'">Cancelar</button>
             </div>
         </form>
     </main>
 
     <script>
-        // Lógica para trocar as imagens em tempo real (Preview)
+        // Função para trocar o preview das imagens
         function setupPreview(inputId, imgId) {
             document.getElementById(inputId).addEventListener('change', function(e) {
-                if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                if (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         document.getElementById(imgId).src = event.target.result;
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
+                    }
+                    reader.readAsDataURL(file);
                 }
             });
         }
 
-        setupPreview('input-banner', 'img-banner-preview');
-        setupPreview('input-photo', 'img-photo-preview');
+        setupPreview('input-banner', 'preview-banner');
+        setupPreview('input-photo', 'preview-photo');
 
-        // Lógica de Salvamento (LocalStorage)
-        document.getElementById('btn-salvar').addEventListener('click', () => {
+        // Lógica de Salvamento Local (Persistência)
+        document.getElementById('btn-save').addEventListener('click', function() {
             const nick = document.getElementById('nick-input').value;
             const bio = document.getElementById('bio-input').value;
-            const banner = document.getElementById('img-banner-preview').src;
-            const photo = document.getElementById('img-photo-preview').src;
+            const banner = document.getElementById('preview-banner').src;
+            const photo = document.getElementById('preview-photo').src;
 
-            if(nick) localStorage.setItem('userNick', nick);
-            if(bio) localStorage.setItem('userBio', bio);
+            // Salva no navegador do usuário
+            localStorage.setItem('userNick', nick);
+            localStorage.setItem('userBio', bio);
             localStorage.setItem('userBanner', banner);
             localStorage.setItem('userPhoto', photo);
 
-            alert("Perfil atualizado com sucesso!");
+            alert('Perfil atualizado com sucesso!');
             window.location.href = 'perfil.html';
         });
+
+        // Carregar dados salvos anteriormente ao abrir a página de edição
+        window.onload = function() {
+            if(localStorage.getItem('userNick')) document.getElementById('nick-input').value = localStorage.getItem('userNick');
+            if(localStorage.getItem('userBio')) document.getElementById('bio-input').value = localStorage.getItem('userBio');
+            if(localStorage.getItem('userBanner')) document.getElementById('preview-banner').src = localStorage.getItem('userBanner');
+            if(localStorage.getItem('userPhoto')) document.getElementById('preview-photo').src = localStorage.getItem('userPhoto');
+        }
     </script>
 </body>
 </html>
