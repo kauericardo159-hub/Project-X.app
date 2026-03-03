@@ -1,32 +1,35 @@
 /* ==========================================================================
-      PROJECT-X | SISTEMA DE SALVAMENTO AVANÇADO (V2)
-========================================================================= */
+      PROJECT-X | SISTEMA DE SALVAMENTO AVANÇADO (V3.0)
+========================================================================== */
 
 const NexusStorage = {
     
-    // Pega o nick do usuário logado no momento
+    // Pega o nick limpo do usuário logado
     getActiveUser: function() {
         const nick = localStorage.getItem('nexus_user_nick');
         if (!nick) return null;
-        // Limpa o nick para usar como chave no banco (remove @ e espaços)
+        // Limpa o @ e espaços para usar como chave no banco
         return nick.replace('@', '').toLowerCase().trim();
     },
 
     /* ==========================================================================
-          BUSCA DE TODOS OS USUÁRIOS (Para a Lista da Home)
+          LISTAGEM DE COMUNIDADE (NOVO)
+          Retorna todos os usuários reais cadastrados para a Home
     ========================================================================== */
     getAllUsers: function() {
-        const accounts = JSON.parse(localStorage.getItem('nexus_accounts') || '{}');
-        // Transforma o objeto de contas em uma lista (Array) para o JS ler fácil
-        return Object.keys(accounts).map(key => {
-            const user = accounts[key];
-            return {
+        try {
+            const accounts = JSON.parse(localStorage.getItem('nexus_accounts') || '{}');
+            // Converte o objeto de contas em uma lista (Array) fácil de usar
+            return Object.keys(accounts).map(key => ({
                 nick: `@${key}`,
-                name: user.name || "Membro Project-X",
-                avatar: user.avatar || "user-photo.jpg",
-                uid: user.uid || "NX-999"
-            };
-        });
+                name: accounts[key].name || "Usuário",
+                avatar: accounts[key].avatar || "user-photo.jpg",
+                uid: accounts[key].id || "#0000"
+            }));
+        } catch (e) {
+            console.error("Erro ao listar comunidade", e);
+            return [];
+        }
     },
 
     /* ==========================================================================
@@ -38,35 +41,21 @@ const NexusStorage = {
 
         const accounts = JSON.parse(localStorage.getItem('nexus_accounts') || '{}');
         
-        // Se a conta não existir, cria o esqueleto básico primeiro
-        if (!accounts[user]) {
-            accounts[user] = {
-                joinDate: new Date().toLocaleDateString('pt-BR'),
-                uid: "NX-" + Math.floor(1000 + Math.random() * 9000)
-            };
-        }
-
-        // Faz o "Merge" (une os dados antigos com os novos sem apagar nada)
+        // Mantém o que já existe e adiciona/atualiza apenas o que foi enviado
         accounts[user] = {
             ...accounts[user], 
             ...data            
         };
 
         localStorage.setItem('nexus_accounts', JSON.stringify(accounts));
-        console.log(`[SYSTEM] Dados sincronizados para: ${user}`);
+        console.log(`[SYSTEM] Database Sync: ${user}`);
     },
 
     /* ==========================================================================
-          SALVAMENTO DE MÍDIA (FOTO/BANNER)
+          PROCESSAMENTO DE IMAGENS
     ========================================================================== */
     saveMedia: function(file, type) {
         return new Promise((resolve, reject) => {
-            // Verifica se é imagem antes de processar
-            if (!file.type.match('image.*')) {
-                reject("Apenas imagens são permitidas");
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 const base64Data = e.target.result;
@@ -76,34 +65,38 @@ const NexusStorage = {
                 this.saveUserData(update);
                 resolve(base64Data);
             };
-            reader.onerror = () => reject("Erro ao ler arquivo");
+            reader.onerror = () => reject("Erro ao processar imagem");
             reader.readAsDataURL(file);
         });
     },
 
     /* ==========================================================================
-          CARREGAMENTO DE PERFIL (COM FALLBACKS)
+          CARREGAMENTO DE PERFIL (VINCULADO AO ID)
     ========================================================================== */
     loadProfile: function() {
         const user = this.getActiveUser();
         const accounts = JSON.parse(localStorage.getItem('nexus_accounts') || '{}');
         const data = accounts[user] || {};
 
-        // Retorna o objeto pronto para o Perfil e a Home
+        // Retorna o perfil fundindo o LocalStorage (Nick/ID) com o Banco (Dados)
         return {
+            // Identidade (Mantendo IDs Originais)
             nick: localStorage.getItem('nexus_user_nick') || "@visitante",
-            uid: data.uid || localStorage.getItem('nexus_user_id') || "NX-000",
+            uid: data.id || localStorage.getItem('nexus_user_id') || "#0000",
             
+            // Informações Pessoais
             name: data.name || "Usuário Project-X",
             bio: data.bio || "Nenhuma biografia definida.",
             birth: data.birth || "00/00/0000",
             age: data.age || "N/A",
             pronoun: data.pronoun || "Não definido",
             
+            // Mídia
             avatar: data.avatar || "user-photo.jpg",
             banner: data.banner || "banner.jpg",
             
-            joinDate: data.joinDate || "Membro Recente"
+            // Metadados
+            joinDate: data.joinDate || "Membro desde 2026"
         };
     }
 };
