@@ -1,16 +1,14 @@
-/* ==========================================================================
-      PROJECT-X | SERVICE WORKER (ENGINE)
-========================================================================== */
-
+/* sw.js atualizado */
 const CACHE_NAME = 'project-x-v1';
 
-// Arquivos para funcionar offline (opcional, mas ajuda na velocidade)
+// O segredo é usar caminhos relativos com './'
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './components.js',
   './save-system.js',
+  './manifest.json',
   './icon.png'
 ];
 
@@ -20,7 +18,6 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// O evento FETCH é obrigatório para o Chrome mostrar o botão de instalar
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
