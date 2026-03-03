@@ -138,6 +138,9 @@ function loadComponents() {
 
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
     document.body.insertAdjacentHTML('beforeend', navHTML);
+}
+
+window.addEventListener('DOMContentLoaded', loadComponents);
 
     /* ==========================================================================
           REGISTRO DO SERVICE WORKER (PWA)
@@ -152,5 +155,3 @@ function loadComponents() {
             })
             .catch(err => console.log("Project-X: Falha no PWA", err));
     }
-
-window.addEventListener('DOMContentLoaded', loadComponents);
