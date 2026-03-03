@@ -141,18 +141,3 @@ function loadComponents() {
 }
 
 window.addEventListener('DOMContentLoaded', loadComponents);
-
-    /* ==========================================================================
-          SISTEMA PWA - REGISTRO E CONTROLO
-    ========================================================================== */
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js', { scope: './' })
-                .then(reg => {
-                    console.log("Project-X: App Engine Ativo");
-                    // Força a atualização se houver mudanças no sw.js
-                    reg.update();
-                })
-                .catch(err => console.error("Erro PWA:", err));
-        });
-    }

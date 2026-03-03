@@ -1,34 +1,41 @@
-const CACHE_NAME = 'px-v2';
-const ASSETS = [
+/* PROJECT-X SERVICE WORKER - V3 */
+const CACHE_NAME = 'px-alpha-cache';
+const FILES_TO_CACHE = [
   './',
   './index.html',
-  './components.js',
-  './save-system.js',
+  './manifest.json',
   './icon-192.png',
-  './icon-512.png',
-  './manifest.json'
+  './icon-512.png'
 ];
 
-// Instala e guarda os ficheiros essenciais
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+// Instalação e Cache
+self.addEventListener('install', (evt) => {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Project-X: Armazenando arquivos vitais');
+      return cache.addAll(FILES_TO_CACHE);
+    })
   );
   self.skipWaiting();
 });
 
-// Ativa e limpa caches velhos
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+// Ativação e limpeza de lixo
+self.addEventListener('activate', (evt) => {
+  evt.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      }));
     })
   );
+  self.clients.claim();
 });
 
-// EVENTO FETCH: Sem isto, o Chrome NÃO permite instalar como App
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+// Resposta Offline/Online (Obrigatório para Android/PC)
+self.addEventListener('fetch', (evt) => {
+  evt.respondWith(
+    fetch(evt.request).catch(() => {
+      return caches.match(evt.request);
+    })
   );
 });

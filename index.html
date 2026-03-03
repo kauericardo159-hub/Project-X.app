@@ -6,8 +6,10 @@
     <title>Nexus Digital | Início</title>
     <link rel="icon" href="icon.png" type="image/png">
     
+    <link rel="manifest" href="manifest.json"> 
+   
     <link rel="stylesheet" href="style.css">
- 
+
 </head>
 <body class="page-home">
 
@@ -21,5 +23,15 @@
     <script src="stats-auto-system.js"></script>
    <script src="index.js"></script>
   
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Project-X: App Pronto'))
+        .catch(err => console.log('Erro PWA:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
