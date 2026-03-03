@@ -1,27 +1,28 @@
-const CACHE_NAME = 'projectx-v1';
+/* ==========================================================================
+      PROJECT-X | SERVICE WORKER (ENGINE)
+========================================================================== */
+
+const CACHE_NAME = 'project-x-v1';
+
+// Arquivos para funcionar offline (opcional, mas ajuda na velocidade)
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/components.js',
-  '/save-system.js',
-  '/icon.png'
+  './',
+  './index.html',
+  './style.css',
+  './components.js',
+  './save-system.js',
+  './icon.png'
 ];
 
-// Instalação do Service Worker
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
-// Resposta com Cache
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => {
-      return res || fetch(e.request);
-    })
+// O evento FETCH é obrigatório para o Chrome mostrar o botão de instalar
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });

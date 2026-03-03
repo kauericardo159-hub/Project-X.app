@@ -1,16 +1,17 @@
 {
   "name": "Project-X Alpha",
   "short_name": "Project-X",
-  "description": "Sistema de Autenticação Nexus - Space Edition",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#ff6b00",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon.png",

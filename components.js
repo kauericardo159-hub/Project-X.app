@@ -143,12 +143,14 @@ function loadComponents() {
           REGISTRO DO SERVICE WORKER (PWA)
     ========================================================================== */
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log("Project-X: Sistema PWA Ativo!"))
-                .catch(err => console.log("Project-X: Falha no PWA", err));
-        });
+        // Removemos o window.load para registrar o mais rápido possível
+        navigator.serviceWorker.register('sw.js', { scope: './' })
+            .then(reg => {
+                console.log("Project-X: Sistema PWA Ativo!");
+                // Força a atualização se houver versão nova
+                reg.update();
+            })
+            .catch(err => console.log("Project-X: Falha no PWA", err));
     }
-}
 
 window.addEventListener('DOMContentLoaded', loadComponents);
