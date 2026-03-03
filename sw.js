@@ -1,23 +1,25 @@
-/* sw.js atualizado */
-const CACHE_NAME = 'project-x-v1';
+const CACHE_NAME = 'px-cache-v1';
 
-// O segredo é usar caminhos relativos com './'
-const ASSETS = [
-  './',
+// Arquivos vitais
+const PRE_CACHE = [
   './index.html',
   './style.css',
   './components.js',
-  './save-system.js',
-  './manifest.json',
-  './icon.png'
+  './icon-192.png'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRE_CACHE))
   );
+  self.skipWaiting();
 });
 
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
+// Essencial para o modo standalone
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
