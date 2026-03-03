@@ -1,0 +1,57 @@
+/* ==========================================================================
+      PROJECT-X | GLOBAL SERVER SYSTEM (DATABASE)
+========================================================================== */
+
+const ProjectX_Server = {
+    // Configurações fictícias para estrutura - Aqui conectaremos o Banco Real depois
+    config: {
+        serverName: "Project-X Global Node",
+        version: "1.0.0",
+        status: "Online"
+    },
+
+    /* ==========================================================================
+          SISTEMA DE SINCRONIZAÇÃO (INTERAÇÃO)
+    ========================================================================== */
+    
+    // 1. Enviar Atividade para o "Mundo"
+    broadcastActivity: function(tipo, mensagem) {
+        const userNick = localStorage.getItem('nexus_user_nick');
+        const userID = localStorage.getItem('nexus_user_id');
+
+        const payload = {
+            sender: userNick,
+            id: userID,
+            action: tipo,
+            content: mensagem,
+            timestamp: new Date().getTime()
+        };
+
+        console.log(`[SERVER] Enviando para o servidor:`, payload);
+        
+        // Aqui o código enviará para o Banco de Dados (Firebase/Supabase)
+        // Por enquanto, simulamos o salvamento local de "atividades globais"
+        this.saveToGlobalFeed(payload);
+    },
+
+    // 2. Simular Feed de Interação
+    saveToGlobalFeed: function(data) {
+        let feed = JSON.parse(localStorage.getItem('projectx_global_feed') || '[]');
+        feed.unshift(data); // Coloca a nova interação no topo
+        if(feed.length > 50) feed.pop(); // Mantém apenas as últimas 50
+        localStorage.setItem('projectx_global_feed', JSON.stringify(feed));
+    },
+
+    /* ==========================================================================
+          SISTEMA DE STATUS GLOBAL (QUEM ESTÁ ONLINE)
+    ========================================================================== */
+    
+    updateGlobalStatus: function(status) {
+        const userID = localStorage.getItem('nexus_user_id');
+        // No futuro, isso diria ao servidor: "Usuário X está Online agora"
+        console.log(`[SERVER] Usuário ${userID} status alterado para: ${status}`);
+    }
+};
+
+// Iniciar conexão simulada
+console.log(`[SERVER] Conectado ao ${ProjectX_Server.config.serverName}`);

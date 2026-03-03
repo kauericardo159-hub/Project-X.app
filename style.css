@@ -1,17 +1,7 @@
 /* ==========================================================================
-   CONFIGURAÇÕES GERAIS E TEMA LARANJA DARK
-   ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;700&display=swap');
-
-:root {
-    --primary-orange: #ff6b00; /* Laranja vibrante */
-    --accent-gold: #ffcc00;
-    --bg-deep: #0d0d0d;       /* Preto quase absoluto */
-    --bg-card: #1a1a1a;       /* Cinza chumbo para cards */
-    --text-main: #e0e0e0;
-    --glass: rgba(255, 107, 0, 0.05);
-    --border-color: rgba(255, 107, 0, 0.2);
-}
+      CONFIGURAÇÕES GERAIS E TEMA
+========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
 * {
     margin: 0;
@@ -22,335 +12,202 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-deep);
+    background-color: #0d0d0d;
     background-image: radial-gradient(circle at top right, #2a1200 0%, #0d0d0d 100%);
     background-attachment: fixed;
-    color: var(--text-main);
+    color: #e0e0e0;
     line-height: 1.6;
+    overflow-x: hidden;
 }
-
-/* --- ANIMAÇÕES --- */
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-main { animation: fadeUp 0.5s ease-out; }
 
 /* ==========================================================================
-   NAVBAR SUPERIOR (Otimizada para Index e Perfil)
-   ========================================================================== */
-.navbar, .navbar-topo {
+      PÁGINA DE LOGIN (SPACE ATMOSPHERE - HD)
+========================================================================== */
+
+/* Fundo Principal */
+.page-login {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 25px;
-    background: rgba(13, 13, 13, 0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 1100;
-}
-
-.container-header { display: flex; align-items: center; }
-
-.logo-img, .site-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    margin-right: 12px;
-    border: 1px solid var(--primary-orange);
-    box-shadow: 0 0 12px rgba(255, 107, 0, 0.4);
-}
-
-.app-name, .site-name {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(to right, #fff, var(--primary-orange));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* ==========================================================================
-   PERFIL (BANNER E AVATAR À ESQUERDA)
-   ========================================================================== */
-.profile-container, .perfil-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding-bottom: 100px;
-}
-
-.banner-wrapper {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    background: #000;
+    justify-content: center;
+    height: 100vh;
+    background-color: #020005; 
     overflow: hidden;
+    position: relative;
 }
 
-.profile-banner, .user-banner {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* Camada 1: Nebulosa Fluida (Azul e Roxo) */
+.page-login::before {
+    content: "";
+    position: absolute;
+    width: 150vmax;
+    height: 150vmax;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 100, 255, 0.2), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(130, 0, 255, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(70, 0, 150, 0.1), transparent 50%);
+    animation: spaceFloat 40s ease-in-out infinite alternate;
+    z-index: 0;
+    filter: blur(50px);
+    will-change: transform;
 }
 
-.banner-overlay {
+/* Camada 2: Estrelas Cintilantes */
+.page-login::after {
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+    background-image: 
+        radial-gradient(1px 1px at 20% 30%, #fff 100%, transparent),
+        radial-gradient(1.2px 1.2px at 70% 10%, #fff 80%, transparent),
+        radial-gradient(1.5px 1.5px at 40% 80%, rgba(0, 200, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 90% 90%, #fff 100%, transparent);
+    background-size: 300px 300px;
+    opacity: 0.25;
+    z-index: 1;
 }
 
-/* Header do Perfil: Foto no canto esquerdo */
-.profile-header, .perfil-header {
-    display: flex;
-    align-items: flex-end;
-    padding: 0 25px;
-    margin-top: -60px;
+/* Container de Vidro (Onde o login.js injeta o painel) */
+.login-screen {
     position: relative;
     z-index: 10;
-}
-
-.avatar-container, .foto-frame {
-    width: 125px;
-    height: 125px;
-    border-radius: 50%;
-    border: 5px solid var(--bg-deep);
-    background: var(--bg-card);
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-}
-
-.profile-avatar, .user-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-nick, .user-nick {
-    margin: 0 0 15px 20px;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-.about-section, .perfil-bio {
-    margin: 40px 25px;
-    background: var(--bg-card);
-    padding: 25px;
-    border-radius: 18px;
-    border: 1px solid var(--border-color);
-}
-
-.label-purple, label {
-    color: var(--primary-orange);
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.btn-edit-action {
-    position: absolute;
-    bottom: 20px;
-    right: 25px;
-    background: var(--primary-orange);
-    color: #000;
-    padding: 10px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.85rem;
-    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
-    transition: 0.2s;
-}
-
-.btn-edit-action:active { transform: scale(0.95); }
-
-/* ==========================================================================
-   EDIÇÃO (TELA CHEIA E MODAIS)
-   ========================================================================== */
-.edit-fullscreen {
-    padding: 30px 20px;
-    min-height: 100vh;
-}
-
-.form-container, .edit-form-advanced {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.edit-field, .edit-item-box {
-    margin-bottom: 25px;
-    position: relative;
-}
-
-/* Box de Preview na Edição */
-.banner-preview-box, .banner-preview-edit {
-    width: 100%;
-    height: 140px;
-    border-radius: 15px;
-    border: 2px dashed var(--border-color);
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-}
-
-.avatar-field { display: flex; flex-direction: column; align-items: center; }
-
-.avatar-preview-box {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 3px solid var(--primary-orange);
-    position: relative;
-    overflow: hidden;
-}
-
-.overlay-edit {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-}
-
-.edit-field input, .edit-field textarea {
-    width: 100%;
-    background: var(--bg-card);
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 15px;
-    color: white;
-    font-size: 1rem;
-    outline: none;
-    transition: 0.3s;
-}
-
-.edit-field input:focus { border-color: var(--primary-orange); }
-
-/* MODAL DE RECORTE E AVISOS */
-.modal-crop, .modal-alert {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.95);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.modal-crop.active, .modal-alert.active { display: flex; }
-
-.crop-content, .alert-content {
-    background: var(--bg-card);
-    width: 100%;
+    width: 90%;
     max-width: 400px;
-    padding: 30px;
-    border-radius: 25px;
-    text-align: center;
-    border: 1px solid var(--border-color);
+    min-height: 450px; /* Garante espaço para o conteúdo dinâmico */
+    padding: 40px;
+    background: rgba(5, 5, 15, 0.4); 
+    backdrop-filter: blur(25px) saturate(160%);
+    -webkit-backdrop-filter: blur(25px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(0, 100, 255, 0.05);
 }
 
-.crop-area {
-    margin: 20px 0;
-    border: 1px solid #444;
-    background: #000;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.action-footer, .crop-footer, .alert-btns {
-    display: flex;
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.btn-save-confirm, .confirm-crop, .confirm-exit {
-    flex: 2;
-    background: var(--primary-orange);
-    color: #000;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.btn-cancel, .alert-btns button:first-child {
-    flex: 1;
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    cursor: pointer;
+/* Brilho Superior no Card */
+.login-screen::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 198, 255, 0.3), transparent);
 }
 
 /* ==========================================================================
-   BARRA DE NAVEGAÇÃO INFERIOR
-   ========================================================================== */
-.bottom-nav, .menu-inferior {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: fixed;
-    bottom: 0; left: 0; width: 100%; height: 80px;
-    background: rgba(13, 13, 13, 0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-color);
-    z-index: 1000;
-    padding-bottom: 20px;
+      ANIMAÇÕES DE SISTEMA
+========================================================================== */
+@keyframes spaceFloat {
+    0% { transform: translate(-5%, -5%) rotate(0deg); }
+    50% { transform: translate(2%, 5%) scale(1.05); }
+    100% { transform: translate(-2%, -8%) rotate(5deg); }
 }
 
-.nav-item {
-    text-decoration: none;
+/* ==========================================================================
+      PÁGINA INICIAL (HOME)
+========================================================================== */
+.page-home {
+    padding-top: 60px; /* Espaço para navbar futura */
+}
+
+/* ==========================================================================
+      PÁGINA DE PERFIL (VIEW)
+========================================================================== */
+.page-profile {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+      PÁGINA DE EDIÇÃO (CREATIVE STUDIO - DARK)
+========================================================================== */
+
+.page-edit {
+    min-height: 100vh;
+    /* Fundo Carbono Profundo */
+    background-color: #050505;
+    /* Camadas de Grade e Luzes de Foco */
+    background-image: 
+        /* Grade Técnica sutil */
+        linear-gradient(rgba(255, 107, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 107, 0, 0.03) 1px, transparent 1px),
+        /* Brilho de "Lâmpada de Estúdio" no topo esquerdo */
+        radial-gradient(circle at 0% 0%, rgba(255, 107, 0, 0.07) 0%, transparent 50%),
+        /* Vinheta preta nas bordas para focar no centro */
+        radial-gradient(circle at center, transparent 0%, #000 100%);
+    background-size: 30px 30px, 30px 30px, 100% 100%, 100% 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #666;
-    transition: 0.3s;
+    padding: 20px;
+    position: relative;
 }
 
-.nav-icon, .nav-item img {
-    width: 26px;
-    margin-bottom: 5px;
-    filter: grayscale(1) opacity(0.5);
-}
-
-.nav-item span { font-size: 0.7rem; font-weight: 600; }
-
-.nav-item.active { color: var(--primary-orange); }
-
-.nav-item.active .nav-icon, .nav-item.active img {
-    filter: grayscale(0) opacity(1);
-    filter: drop-shadow(0 0 5px var(--primary-orange));
-}
-
-/* Status Badge */
-.status-badge {
+/* Linha de "Scanner" que passa pelo fundo (Opcional, dá um toque Sci-Fi) */
+.page-edit::before {
+    content: "";
     position: absolute;
-    bottom: 5px;
-    right: -10px;
-    background: #000;
-    padding: 4px 10px;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 107, 0, 0.05), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scanline {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+/* Container do Formulário de Edição */
+.edit-screen {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: 500px;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255, 107, 0, 0.15);
     border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    margin-top: 20px;
+}
+
+/* Títulos de Seção dentro da Edição */
+.edit-screen h3 {
+    color: #ff6b00;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    border-left: 3px solid #ff6b00;
+    padding-left: 10px;
+}
+
+/* ==========================================================================
+      UTILITÁRIOS E CORES (ORANGE SUNSET)
+========================================================================== */
+:root {
+    --primary-orange: #ff6b00;
+    --dark-carbon: #1a1a1a;
+    --glass-effect: rgba(255, 107, 0, 0.1);
+    --border-soft: rgba(255, 107, 0, 0.2);
+}
+
+.text-orange { color: var(--primary-orange); }
+.bg-card { background: var(--dark-carbon); border-radius: 15px; }
+
+/* ==========================================================================
+      MODAIS E ALERTAS
+========================================================================== */
+.modal-base {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
     display: flex;
     align-items: center;
-    gap: 6px;
-    border: 1px solid var(--primary-orange);
+    justify-content: center;
+    z-index: 9999;
 }
-
-.status-dot { width: 10px; height: 10px; }
-.status-badge span { font-size: 0.65rem; color: #fff; font-weight: 700; }

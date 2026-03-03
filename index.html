@@ -3,50 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project X - Alpha</title>
+    <title>Nexus Digital | Início</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    
     <link rel="stylesheet" href="style.css">
+ 
 </head>
-<body class="home-page">
+<body class="page-home">
 
-    <script>
-        if (!localStorage.getItem('usuarioLogado')) {
-            window.location.href = 'login.html';
-        }
-    </script>
+    <main class="home-content">
+        </main>
 
-    <main class="feed-container">
-        <h2 class="feed-title">Explorar Galáxia</h2>
-
-        <div id="feed-lista">
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="icon.png" class="post-avatar">
-                    <div class="post-info">
-                        <strong>Project X Official</strong>
-                        <span>@admin</span>
-                    </div>
-                </div>
-                <p class="post-content">
-                    Bem-vindo ao seu novo centro de comando. Aqui você encontrará as últimas atualizações do sistema e novidades da comunidade.
-                </p>
-            </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="user-photo.jpg" class="post-avatar">
-                    <div class="post-info">
-                        <strong>Explorador Alfa</strong>
-                        <span>@astro_dev</span>
-                    </div>
-                </div>
-                <p class="post-content">
-                    A estrutura de componentes está funcionando! Agora o site carrega o topo e o menu de forma sincronizada em todas as páginas.
-                </p>
-            </div>
-        </div>
-    </main>
+    <script src="save-system.js"></script>
 
     <script src="components.js"></script>
+
+    <script src="stats-auto-system.js"></script>
 
 </body>
 </html>
