@@ -1,25 +1,32 @@
-const CACHE_NAME = 'px-cache-v1';
-
-// Arquivos vitais
-const PRE_CACHE = [
+const CACHE_NAME = 'px-v2';
+const ASSETS = [
+  './',
   './index.html',
-  './style.css',
   './components.js',
-  './icon-192.png'
+  './save-system.js',
+  './icon-192.png',
+  './icon-512.png',
+  './manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRE_CACHE))
+// Instala e guarda os ficheiros essenciais
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+// Ativa e limpa caches velhos
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+    })
+  );
 });
 
-// Essencial para o modo standalone
+// EVENTO FETCH: Sem isto, o Chrome NÃO permite instalar como App
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
