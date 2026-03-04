@@ -1,142 +1,319 @@
 /* ==========================================================================
-      PROJECT-X | INDEX SYSTEM (BOAS-VINDAS & LISTA DE USUÁRIOS)
+      PROJECT-X | INDEX SYSTEM V8.0 (PREMIUM UI + DYNAMIC STATS)
+      Novidades: CSS Completo (Guest/Home), Integração com Stats Auto System
 ========================================================================== */
 
 const IndexSystem = {
-    init: function() {
+    state: {
+        currentUser: null,
+        allUsers: []
+    },
+
+    init: async function() {
+        if (typeof NexusStorage !== 'undefined' && NexusStorage.init) {
+            await NexusStorage.init();
+        }
+        
+        this.state.currentUser = NexusStorage.loadProfile();
+        this.state.allUsers = NexusStorage.getAllUsers();
+        
         this.injectCSS();
         this.renderHome();
     },
 
     // ==================================================
-    // CSS DO SISTEMA DE VISITANTE E BOAS-VINDAS
+    // 1. INTEGRAÇÃO COM STATS-AUTO-SYSTEM
+    // ==================================================
+    getUserStatus: function(nick) {
+        const cleanNick = nick.replace('@', '');
+        
+        // 1. Tenta usar a função global do stats-auto-system.js, se existir
+        if (typeof StatsSystem !== 'undefined' && StatsSystem.getUserStatus) {
+            return StatsSystem.getUserStatus(cleanNick);
+        }
+        
+        // 2. Fallback: Procura diretamente no localStorage (onde o sistema geralmente salva)
+        const savedStatus = localStorage.getItem(`nexus_status_${cleanNick}`);
+        return savedStatus ? savedStatus : 'offline'; // Se não achar nada, está offline
+    },
+
+    getStatusIcon: function(status) {
+        status = status.toLowerCase();
+        if (status === 'online') return 'status-online.png';
+        if (status === 'ausente') return 'status-ausente.png';
+        return 'status-offline.png'; // Padrão para offline ou desconhecido
+    },
+
+    // ==================================================
+    // 2. CSS COMPLETO (INCLUINDO GUEST VIEW)
     // ==================================================
     injectCSS: function() {
+        // Evita duplicar a tag <style> se a função rodar duas vezes
+        if (document.getElementById('index-premium-styles')) return;
+
         const style = document.createElement('style');
+        style.id = 'index-premium-styles';
         style.innerHTML = `
-            /* Welcome Card para Visitantes */
+            :root { --nx-orange: #ff6b00; --nx-dark: #050505; --nx-card: #111; }
+
+            /* --- GUEST VIEW (VISITANTES) --- */
             .welcome-card {
-                background: linear-gradient(135px, #111 0%, #1a1a1a 100%);
-                border: 1px solid rgba(255, 107, 0, 0.3);
-                border-radius: 20px;
-                padding: 30px;
-                margin: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
                 text-align: center;
-                animation: slideIn 0.6s ease-out;
-            }
-            .welcome-card h2 { color: #fff; margin-bottom: 10px; font-weight: 900; }
-            .welcome-card h2 b { color: #ff6b00; }
-            .welcome-card p { color: #888; font-size: 0.9rem; margin-bottom: 25px; line-height: 1.4; }
-            .btn-login-index {
-                background: #ff6b00; color: #000; padding: 15px; border-radius: 12px;
-                text-decoration: none; font-weight: 800; font-size: 0.9rem; transition: 0.3s;
-                display: block; box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+                margin: 40px 20px;
+                padding: 40px 20px;
+                background: rgba(15, 15, 15, 0.8);
+                border: 1px solid rgba(255, 107, 0, 0.2);
+                border-radius: 25px;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             }
 
-            /* ==================================================
-               CSS DA LISTA DE USUÁRIOS REAIS
-            ================================================== */
-            .users-section { padding: 15px 0; background: #050505; border-bottom: 1px solid #222; margin-bottom: 10px; }
-            .users-list-label { font-size: 0.65rem; color: #ff6b00; font-weight: 800; margin-left: 20px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-            
+            .welcome-card h2 {
+                color: #fff;
+                font-size: 2.2rem;
+                font-weight: 300;
+                letter-spacing: 2px;
+                margin-bottom: 10px;
+            }
+            .welcome-card h2 b { color: var(--nx-orange); font-weight: 900; }
+            .welcome-card p { color: #888; font-size: 0.9rem; margin-bottom: 30px; }
+
+            .btn-login-index {
+                background: var(--nx-orange);
+                color: #000;
+                padding: 15px 35px;
+                border-radius: 15px;
+                font-weight: 900;
+                text-decoration: none;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: transform 0.2s;
+            }
+            .btn-login-index:active { transform: scale(0.95); }
+
+            /* --- CARD DO USUÁRIO PRINCIPAL --- */
+            .quick-profile-card {
+                position: relative;
+                margin: 20px;
+                border-radius: 25px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 107, 0, 0.3);
+                background: #000;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+            .quick-profile-card:active { transform: scale(0.98); }
+
+            .card-banner-bg {
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 100%;
+                object-fit: cover;
+                opacity: 0.3;
+                filter: blur(3px);
+                z-index: 0;
+            }
+
+            .card-content {
+                position: relative;
+                z-index: 1;
+                padding: 25px 20px;
+                display: flex;
+                align-items: center;
+                gap: 18px;
+                background: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1));
+            }
+
+            .quick-avatar {
+                width: 65px; height: 65px;
+                border-radius: 50%;
+                border: 3px solid var(--nx-orange);
+                object-fit: cover;
+                box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+            }
+
+            .quick-info { display: flex; flex-direction: column; gap: 5px; }
+
+            .quick-info .quick-name {
+                color: #fff; font-size: 1.15rem; font-weight: 900;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            }
+
+            .quick-status-row {
+                display: flex; align-items: center; gap: 6px;
+                background: rgba(0,0,0,0.6);
+                padding: 5px 12px;
+                border-radius: 20px;
+                width: fit-content;
+                border: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .status-icon-small { width: 10px; height: 10px; object-fit: contain; }
+            .status-text { color: #ccc; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+
+            /* --- LISTA DA COMUNIDADE (SCROLL) --- */
+            .community-box { padding: 10px 0 25px 0; border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 20px; }
+            .section-title {
+                font-size: 0.7rem; color: var(--nx-orange);
+                font-weight: 900; margin: 0 0 15px 20px;
+                text-transform: uppercase; letter-spacing: 2px;
+                opacity: 0.9;
+            }
+
             .users-scroll { 
-                display: flex; gap: 15px; overflow-x: auto; padding: 0 20px; 
-                scrollbar-width: none; -ms-overflow-style: none;
+                display: flex; gap: 18px; overflow-x: auto; 
+                padding: 0 20px; scrollbar-width: none;
             }
             .users-scroll::-webkit-scrollbar { display: none; }
 
-            .user-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; cursor: pointer; }
-            .user-photo-wrap { position: relative; width: 60px; height: 60px; border-radius: 50%; padding: 2px; border: 2px solid #ff6b00; margin-bottom: 5px; }
-            .user-photo-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #222; }
-            
-            /* Stats Indicator na lista */
-            .user-status-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #050505; background: #00ff00; }
-            .user-name-label { color: #fff; font-size: 0.65rem; font-weight: 600; width: 70px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-            /* ==================================================
-               CSS DO MINI-CARD (USUÁRIO ATUAL)
-            ================================================== */
-            .self-card {
-                background: #111; border: 1px solid #333; margin: 15px 20px; border-radius: 15px;
-                padding: 12px; display: flex; align-items: center; gap: 15px;
+            .u-item { 
+                display: flex; flex-direction: column; align-items: center; 
+                min-width: 70px; text-decoration: none; cursor: pointer;
             }
-            .self-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ff6b00; object-fit: cover; }
-            .self-info { flex: 1; }
-            .self-id { font-size: 0.55rem; color: #ff6b00; font-weight: 800; opacity: 0.7; }
-            .self-name { color: #fff; font-size: 0.85rem; font-weight: 800; display: block; }
-            .self-stats { font-size: 0.6rem; color: #00ff00; font-weight: 700; display: flex; align-items: center; gap: 4px; }
 
-            @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+            .u-photo-container {
+                position: relative;
+                width: 65px; height: 65px;
+                border-radius: 50%;
+                padding: 3px;
+                background: linear-gradient(45deg, #222, #444);
+                margin-bottom: 8px;
+                border: 1px solid rgba(255,255,255,0.1);
+                transition: transform 0.2s;
+            }
+            .u-item:active .u-photo-container { transform: scale(0.92); }
+            .u-item.is-me .u-photo-container { background: var(--nx-orange); }
+
+            .u-photo-container img.user-img {
+                width: 100%; height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                background: #111;
+                border: 2px solid #000;
+            }
+
+            .u-info-bottom {
+                display: flex; align-items: center; gap: 5px;
+                max-width: 80px;
+                background: rgba(0,0,0,0.4);
+                padding: 3px 8px;
+                border-radius: 10px;
+            }
+
+            .u-name {
+                color: #ddd; font-size: 0.7rem; font-weight: 700;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .u-item.is-me .u-name { color: var(--nx-orange); }
+
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         `;
         document.head.appendChild(style);
     },
 
     // ==================================================
-    // LÓGICA DE RENDERIZAÇÃO
+    // 3. RENDERIZAÇÃO DA PÁGINA
     // ==================================================
     renderHome: function() {
-        const user = NexusStorage.getActiveUser();
-        const allUsers = NexusStorage.getAllUsers(); // Puxa todas as contas criadas
+        const userActive = NexusStorage.getActiveUser();
         const mainContent = document.querySelector('main');
         
-        if (!user) {
-            // TELA PARA VISITANTE
-            mainContent.innerHTML = `
-                <div class="welcome-card">
-                    <h2>Bem-vindo ao PROJ<b>ECT-X</b></h2>
-                    <p>Você está acessando como visitante. Entre na sua conta para interagir com a comunidade.</p>
-                    <a href="login.html" class="btn-login-index">ENTRAR OU CRIAR CONTA</a>
-                </div>
-            `;
+        if (!mainContent) return;
+
+        if (!userActive) {
+            this.renderGuestView(mainContent);
             return;
         }
 
-        // TELA PARA USUÁRIO LOGADO
-        const profile = NexusStorage.loadProfile();
+        const profile = this.state.currentUser;
+        const myStatus = this.getUserStatus(profile.nick);
+        const myStatusIcon = this.getStatusIcon(myStatus);
         
-        // 1. Inicia o HTML da Home
-        let homeHTML = `
-            <div class="self-card">
-                <img src="${profile.avatar}" class="self-avatar" onerror="this.src='user-photo.jpg'">
-                <div class="self-info">
-                    <span class="self-id">UID: ${profile.uid || 'NX-001'}</span>
-                    <span class="self-name">${profile.name}</span>
-                    <div class="self-stats">
-                         <img src="status-online.png" style="width: 8px;"> ONLINE
+        mainContent.innerHTML = `
+            <div class="quick-profile-card" onclick="window.location.href='perfil.html'">
+                <img src="${profile.banner}" class="card-banner-bg" onerror="this.src='banner.jpg'">
+                <div class="card-content">
+                    <img src="${profile.avatar}" class="quick-avatar" onerror="this.src='user-photo.jpg'">
+                    <div class="quick-info">
+                        <span class="quick-name">${profile.name}</span>
+                        <div class="quick-status-row">
+                             <img src="${myStatusIcon}" class="status-icon-small">
+                             <span class="status-text">${myStatus} • ${profile.uid}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="users-section">
-                <div class="users-list-label">Comunidade Project-X</div>
-                <div class="users-scroll" id="usersListScroll">
-                    ${this.generateUsersList(allUsers)}
+            <div class="community-box">
+                <div class="section-title">Membros da Rede</div>
+                <div class="users-scroll">
+                    ${this.generateCommunityHTML()}
                 </div>
             </div>
 
-            <div id="global-feed" style="padding: 20px; color: #444; text-align: center; font-size: 0.8rem;">
-                <p>Nenhuma postagem nova por enquanto...</p>
+            <div id="global-feed"></div>
+        `;
+    },
+
+    renderGuestView: function(container) {
+        container.innerHTML = `
+            <div class="welcome-card" style="animation: fadeIn 0.8s ease;">
+                <h2>PROJ<b>ECT-X</b></h2>
+                <p>O Nexus aguarda sua conexão.</p>
+                <a href="login.html" class="btn-login-index">CONECTAR AGORA</a>
             </div>
         `;
-
-        mainContent.innerHTML = homeHTML;
     },
 
     // ==================================================
-    // LISTA DE USUÁRIOS REAIS (APENAS CRIADOS NO SISTEMA)
+    // 4. GERADOR DA COMUNIDADE (EU + OUTROS COM STATS)
     // ==================================================
-    generateUsersList: function(users) {
-        if (!users || users.length === 0) return '<p style="color:#444; font-size:0.6rem; padding-left:20px;">Nenhum usuário ativo.</p>';
+    generateCommunityHTML: function() {
+        const me = this.state.currentUser;
+        const others = this.state.allUsers.filter(u => u.nick.replace('@','') !== me.nick.replace('@',''));
+        
+        const myStatus = this.getUserStatus(me.nick);
+        const myStatusIcon = this.getStatusIcon(myStatus);
 
-        return users.map(u => `
-            <div class="user-item" onclick="window.location.href='perfil.html?u=${u.nick}'">
-                <div class="user-photo-wrap">
-                    <img src="${u.avatar || 'user-photo.jpg'}" alt="${u.name}">
-                    <div class="user-status-dot"></div>
+        let listHTML = `
+            <div class="u-item is-me" onclick="window.location.href='perfil.html'">
+                <div class="u-photo-container">
+                    <img src="${me.avatar}" class="user-img" onerror="this.src='user-photo.jpg'">
                 </div>
-                <span class="user-name-label">${u.name}</span>
+                <div class="u-info-bottom">
+                    <span class="u-name">Você</span>
+                    <img src="${myStatusIcon}" class="status-icon-small">
+                </div>
             </div>
-        `).join('');
+        `;
+
+        if (others.length > 0) {
+            listHTML += others.map(u => {
+                const cleanNick = u.nick.replace('@', '');
+                
+                // Busca o status dinâmico deste usuário específico
+                const userStatus = this.getUserStatus(cleanNick);
+                const statusIcon = this.getStatusIcon(userStatus);
+
+                return `
+                    <div class="u-item" onclick="window.location.href='preview-perfil.html?u=${cleanNick}'">
+                        <div class="u-photo-container">
+                            <img src="${u.avatar}" class="user-img" onerror="this.src='user-photo.jpg'">
+                        </div>
+                        <div class="u-info-bottom">
+                            <span class="u-name">${u.name.split(' ')[0]}</span>
+                            <img src="${statusIcon}" class="status-icon-small" title="${userStatus}">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        return listHTML;
     }
 };
 

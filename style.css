@@ -106,7 +106,7 @@ body {
       PÁGINA INICIAL (HOME)
 ========================================================================== */
 .page-home {
-    padding-top: 60px; /* Espaço para navbar futura */
+    padding-top: 0px; /* Espaço para navbar futura */
 }
 
 /* ==========================================================================
@@ -210,4 +210,21 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 9999;
+}
+
+/* ==========================================================================
+      PROJECT-X | GLOBAL STYLE - BACKGROUND ENGINE
+========================================================================== */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #050505;
+    background-image: 
+        radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 80%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    overflow-x: hidden;
 }

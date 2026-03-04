@@ -1,87 +1,115 @@
 /* ==========================================================================
-      SYSTEM: STATS AUTOMÁTICO (LIVE SYSTEM)
+      PROJECT-X | STATS AUTO SYSTEM V9.0 (ULTRA-SYNC)
+      Novidades: Persistência no LocalStorage, Broadcast de Status e Correções
 ========================================================================== */
 
 const StatusSystem = {
-    // Configurações de tempo (em milissegundos)
     config: {
-        idleTime: 30000,    // 30 segundos sem mexer = Ausente
-        inactiveTime: 60000, // 60 segundos sem mexer = Inativo
-        checkInterval: 1000  // Checar a cada 1 segundo
+        idleTime: 30000,    // 30s = Ausente
+        inactiveTime: 60000, // 60s = Inativo
+        checkInterval: 2000  // Checagem a cada 2s para poupar CPU
     },
 
     lastActivity: Date.now(),
+    currentState: null,
 
-    // Definição dos estados
     states: {
         online:  { label: 'Online',  img: 'status-online.png',  color: '#2ecc71' },
         ausente: { label: 'Ausente', img: 'status-ausente.png', color: '#f1c40f' },
-        inativo: { label: 'Inativo', img: 'status-inatico.png', color: '#e74c3c' },
+        inativo: { label: 'Inativo', img: 'status-inativo.png', color: '#e74c3c' },
         offline: { label: 'Off-line', img: 'status-offline.png', color: '#95a5a6' }
     },
 
-    /* ==========================================================================
-          INICIALIZAÇÃO E MONITORES
-    ========================================================================== */
     init: function() {
-        // Registrar qualquer interação como atividade
+        // 1. Registrar eventos de atividade
         ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(evt => {
             document.addEventListener(evt, () => this.resetTimer(), { passive: true });
         });
 
-        // Iniciar o loop de verificação
+        // 2. Iniciar loop de verificação
         setInterval(() => this.checkStatus(), this.config.checkInterval);
-        console.log("System: Stats Automático Ativado.");
+
+        // 3. Notificar offline ao fechar a aba
+        window.addEventListener('beforeunload', () => this.broadcastStatus('offline'));
+
+        console.log("🚀 System: Stats Automático Sincronizado.");
     },
 
     resetTimer: function() {
-        // Se estava ausente e voltou a mexer, volta para Online imediatamente
-        if (Date.now() - this.lastActivity > this.config.idleTime) {
-            this.updateUI(this.states.online);
+        const diff = Date.now() - this.lastActivity;
+        // Se retornar de um estado de inatividade, força atualização imediata
+        if (diff > this.config.idleTime) {
+            this.checkStatus();
         }
         this.lastActivity = Date.now();
     },
 
-    /* ==========================================================================
-          LÓGICA DE VERIFICAÇÃO (LIVE)
-    ========================================================================== */
     checkStatus: function() {
         const diff = Date.now() - this.lastActivity;
+        let newState;
 
         if (diff >= this.config.inactiveTime) {
-            this.updateUI(this.states.inativo);
+            newState = 'inativo';
         } 
         else if (diff >= this.config.idleTime) {
-            this.updateUI(this.states.ausente);
+            newState = 'ausente';
         } 
         else {
-            this.updateUI(this.states.online);
+            newState = 'online';
+        }
+
+        if (this.currentState !== newState) {
+            this.currentState = newState;
+            this.applyStatus(this.states[newState]);
         }
     },
 
-    /* ==========================================================================
-          ATUALIZAÇÃO VISUAL (DOM)
-    ========================================================================== */
-    updateUI: function(state) {
-        // 1. Atualizar na Navbar (injetada pelo components.js)
-        const navStatusImg = document.querySelector('.status-row img');
-        const navStatusText = document.getElementById('status-text');
+    /**
+     * Aplica visualmente e persiste o dado
+     */
+    applyStatus: function(stateObj) {
+        // 1. Persistência no LocalStorage para o index.js ler
+        this.broadcastStatus(stateObj.label);
 
-        // 2. Atualizar no Perfil (se estiver na página de perfil)
-        const profileStatusImg = document.querySelector('.status-badge img');
-        const profileStatusText = document.querySelector('.status-badge span');
+        // 2. Elementos da Navbar (Componentes)
+        const navImg = document.querySelector('.status-row img, .quick-status-row img');
+        const navText = document.getElementById('status-text') || document.querySelector('.status-text');
 
-        // Aplicar mudanças se os elementos existirem na tela
-        if (navStatusImg) navStatusImg.src = state.img;
-        if (navStatusText) navStatusText.innerText = state.label;
+        // 3. Elementos do Perfil
+        const profileImg = document.querySelector('.status-badge img');
+        const profileText = document.querySelector('.status-badge span');
 
-        if (profileStatusImg) profileStatusImg.src = state.img;
-        if (profileStatusText) profileStatusText.innerText = state.label;
-        
-        // Opcional: Mudar cor do texto do status para dar feedback visual
-        if (navStatusText) navStatusText.style.color = state.color;
+        // Aplicação segura (apenas se o elemento existir)
+        const targets = [
+            { img: navImg, txt: navText },
+            { img: profileImg, txt: profileText }
+        ];
+
+        targets.forEach(t => {
+            if (t.img) t.img.src = stateObj.img;
+            if (t.txt) {
+                t.txt.innerText = stateObj.label;
+                t.txt.style.color = stateObj.color;
+            }
+        });
+    },
+
+    /**
+     * Salva o status de forma que o IndexSystem.getUserStatus consiga ler
+     */
+    broadcastStatus: function(label) {
+        const user = localStorage.getItem('nexus_user_nick');
+        if (user) {
+            const cleanNick = user.replace('@', '').toLowerCase().trim();
+            localStorage.setItem(`nexus_status_${cleanNick}`, label);
+        }
+    },
+
+    // Função auxiliar para o IndexSystem consultar status de terceiros
+    getUserStatus: function(nick) {
+        const cleanNick = nick.replace('@', '').toLowerCase().trim();
+        return localStorage.getItem(`nexus_status_${cleanNick}`) || 'offline';
     }
 };
 
-// Iniciar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => StatusSystem.init());

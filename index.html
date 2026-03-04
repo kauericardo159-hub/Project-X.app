@@ -2,36 +2,39 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nexus Digital | Início</title>
-    <link rel="icon" href="icon.png" type="image/png">
     
-    <link rel="manifest" href="manifest.json"> 
-   
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="feed-style.css">
 </head>
 <body class="page-home">
 
-    <main class="home-content">
+    <main class="home-content" id="main-app">
         </main>
 
     <script src="save-system.js"></script>
+    <script src="nexus-core.js"></script>
 
     <script src="components.js"></script>
+    <script src="index.js"></script>
 
+    <script src="nexus-feed.js"></script>
     <script src="stats-auto-system.js"></script>
-   <script src="index.js"></script>
   
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Project-X: App Pronto'))
-        .catch(err => console.log('Erro PWA:', err));
-    });
-  }
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Nexus: PWA Ativo'))
+                    .catch(err => console.error('Nexus: Erro PWA', err));
+            });
+        }
+    </script>
 
 </body>
 </html>
